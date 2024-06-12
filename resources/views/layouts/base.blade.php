@@ -20,14 +20,13 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/color-01.css') }}">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
-<body class="home-page home-01 ">
+<body class="home-page home-01">
     <div class="mercado-clone-wrap">
         <div class="mercado-panels-actions-wrap">
             <a class="mercado-close-btn mercado-close-panels" href="#">x</a>
         </div>
         <div class="mercado-panels"></div>
     </div>
-
 	<header id="header" class="header header-style-1">
 		<div class="container-fluid">
 			<div class="row">

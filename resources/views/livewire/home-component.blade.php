@@ -10,11 +10,10 @@
 					<div class="item-slide">
 						<img src="{{ asset('assets/images/sliders') }}/{{ $slide->image }}" alt="{{ $slide->title }}" class="img-slide">
 						<div class="slide-info slide-1">
-							<h2 class="" style="font-weight: bold">{{ $slide->title }}</b></h2>
-							<span class="subtitle" style="font-weight: bold">{{ $slide->subtitle }}</span>
-							<p class="sale-info">{{ $slide->price }}</p>
-							@if ($slide->link)
-							<a href="{{ $slide->link }}" class="btn-link">Check</a>
+                            <h2 style="color:white; text-shadow:2px 3px 3px rgba(0,0,0,.3)"><b>{{ $slide->title }}</b></h2>
+                            <span class="subtitle" style="color:white; text-shadow:2px 3px 3px rgba(0,0,0,.3); margin-bottom:5px;">{{ $slide->subtitle }}</span><br>
+                            @if ($slide->link)
+							    <a href="{{ $slide->link }}" class="btn-link" target="__blank">Check</a>
 							@endif
 						</div>
 					</div>

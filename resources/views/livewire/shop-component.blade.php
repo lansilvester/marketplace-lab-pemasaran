@@ -14,7 +14,7 @@
 					<div class="wrap-shop-control">
 						<h1 class="shop-title">Semua Product</h1>
 
-						<div class="wrap-right">
+						{{-- <div class="wrap-right">
 							<div class="sort-item orderby ">
 								<select name="orderby" class="use-chosen" wire:model="sorting">
 									<option value="default" selected="selected">Default sorting</option>
@@ -36,8 +36,8 @@
 								</select>
 							</div>
 
-			
-						</div>
+
+						</div> --}}
 
 					</div>
 
@@ -68,7 +68,7 @@
 					<div class="row">
 						<ul class="product-list grid-products equal-container">
 							@php
-								$witems = Cart::instance('wishlist')->content()->pluck('id');	
+								$witems = Cart::instance('wishlist')->content()->pluck('id');
 							@endphp
 							@foreach($products as $product)
 								@if($product->image !== 'default-product.jpg' && $product->count() > 0)
@@ -77,7 +77,7 @@
 											<div class="product-thumnail">
 												<a href="{{ route('product.details',['slug'=>$product->slug]) }}" title="{{ $product->name }}">
 													<figure><img src="{{ asset('assets/images/products') }}/{{ $product->image }}" alt="{{ $product->name }}"></figure>
-													
+
 												</a>
 											</div>
 											<div class="product-info">
@@ -92,15 +92,15 @@
 													@if($product->user->profile->image)
 														<img src="{{ asset('assets/images/profile') }}/{{ $product->user->profile->image }}" width="50px" alt="">
 														@else
-														
+
 														<img src="https://www.perpustakaan-bi.org/img/user/blank.png" width="50px" alt="">
-													@endif	
+													@endif
 														<b>{{ $product->user->name }}</b>
 													</div>
 												</a>
 
 												{{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id}},'{{ $product->name }}',{{ $product->regular_price }})">Add To Cart</a> --}}
-												
+
 												@if (Auth::check() && Auth::user()->utype == 'USR' && Auth::user()->status === 1)
 												<div class="product-wish">
 													@if($witems->contains($product->id))
@@ -110,7 +110,7 @@
 													@endif
 												</div>
 												@endif
-												
+
 											</div>
 										</div>
 									</li>
@@ -133,9 +133,9 @@
 						<div class="widget-content">
 							<ul class="list-category">
 							@foreach($categories as $category)
-							<li class="category-item has-child-cate">							
-								<a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>	
-							</li>	
+							<li class="category-item has-child-cate">
+								<a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>
+							</li>
 							@endforeach
 							</ul>
 						</div>

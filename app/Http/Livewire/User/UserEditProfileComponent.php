@@ -17,11 +17,14 @@ class UserEditProfileComponent extends Component
     public $image;
     public $facebook;
     public $instagram;
+    public $map;
     public $city;
     public $province;
     public $country;
     public $zipcode;
     public $newimage;
+    public $latitude;
+    public $longitude;
 
     public function mount(){
         $user = User::find(Auth::user()->id);
@@ -31,11 +34,15 @@ class UserEditProfileComponent extends Component
         $this->image = $user->profile->image;
         $this->facebook = $user->profile->facebook;
         $this->instagram = $user->profile->instagram;
+        $this->map = $user->profile->map;
         $this->city = $user->profile->city;
         $this->province = $user->profile->province;
         $this->country = $user->profile->country;
         $this->zipcode = $user->profile->zipcode;
+        $this->latitude = $user->profile->latitude;
+        $this->longitude = $user->profile->longitude;
         // $this->newimage = $user->profile->newimage;
+
     }
     public function updateProfile(){
         $user = User::find(Auth::user()->id);
@@ -54,10 +61,13 @@ class UserEditProfileComponent extends Component
         $user->profile->mobile = $this->mobile;
         $user->profile->facebook = $this->facebook;
         $user->profile->instagram = $this->instagram;
+        $user->profile->map = $this->map;
         $user->profile->city = $this->city;
         $user->profile->province = $this->province;
         $user->profile->country = $this->country;
         $user->profile->zipcode = $this->zipcode;
+        $user->profile->latitude = $this->latitude;
+        $user->profile->longitude = $this->longitude;
         $user->profile->save();
         session()->flash('message','Profile telah diupdate');
     }

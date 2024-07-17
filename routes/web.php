@@ -66,7 +66,6 @@ Route::middleware([
 });
 
 // For user or customer
-
 Route::middleware(['auth:sanctum', 'verified'])->group(function(){
     Route::get('/user/dashboard',UserDashboardComponent::class)->name('user.dashboard');
     Route::get('/user/profile', UserProfileComponent::class)->name('user.profile');

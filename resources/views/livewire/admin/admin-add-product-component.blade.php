@@ -9,12 +9,11 @@
                                 <h3>Add New Product</h3>
                             </div>
                             <div class="col-md-6">
-                                <a href="{{ route('admin.products') }}" class="btn btn-success pull-right">All Products</a>
+                                <a href="{{ route('admin.products') }}" class="btn btn-success pull-right">Semua Product</a>
                             </div>
                         </div>
                     </div>
                     <div class="pabel-body" style="padding:30px 0;">
-
                         <form  class="form-horizontal" enctype="multipart/form-data" wire:submit.prevent="addProduct">
                             <div class="form-group">
                                 <label for="" class="col-md-4 control-label">Product name</label>
@@ -46,9 +45,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="" class="col-md-4 control-label">Sale Price</label>
+                                <label for="" class="col-md-4 control-label">Harga (Rp)</label>
                                 <div class="col-md-4">
-                                    <input type="text"  wire:model="sale_price" placeholder="Sale Price" class="form-control input-md">
+                                    <input type="number"  wire:model="sale_price" placeholder="00" class="form-control input-md">
                                     @error('sale_price') <p class="text-danger">{{ $message }}</p> @enderror
                                 </div>
                             </div>
@@ -81,9 +80,9 @@
                             <div class="form-group">
                                 <label for="" class="col-md-4 control-label">Product Image</label>
                                 <div class="col-md-4">
-                                    <input type="file"  wire:model="image" class="input-file">
+                                    <input type="file"  wire:model="image" class="form-control">
                                     @if($image)
-                                    <img src="{{ $image->temporaryUrl() }}" width="120" />
+                                        <img src="{{ $image->temporaryUrl() }}" width="120" />
                                     @endif
                                     @error('image') <p class="text-danger">{{ $message }}</p> @enderror
                                 </div>
@@ -91,7 +90,7 @@
                             <div class="form-group">
                                 <label for="" class="col-md-4 control-label">Product Gallery</label>
                                 <div class="col-md-4">
-                                    <input type="file"  wire:model="images" class="input-file" multiple />
+                                    <input type="file"  wire:model="images" class="form-control" multiple />
                                     @if($images)
                                         @foreach($images as $image)
                                         <img src="{{ $image->temporaryUrl() }}" width="120" />
@@ -133,7 +132,7 @@
 
 
 @push('scripts')
-    <script>
+<script>
         $(function(){
             tinymce.init({
                 selector: '#short_description',
@@ -146,6 +145,7 @@
                     });
                 }
             });
+
             tinymce.init({
                 selector: '#description',
                 apiKey:"j21h7jo1xpes3qhzsz5gpo03z7d8wlqjim0d2d18f2k6dkni",
@@ -158,5 +158,5 @@
                 }
             });
         });
-    </script>
+        </script>
 @endpush

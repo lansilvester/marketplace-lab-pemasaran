@@ -16,7 +16,6 @@
             </ul>
         </div>
         <div class="row">
-
             <div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 main-content-area">
                 <div class="row bg-info" style="padding:20px 0">
                     <div class="col-md-2">
@@ -25,13 +24,14 @@
                     <div class="col-md-6">
                         <h2>{{ $penjual->name }}</h2>
                         <h5>Bergabung Sejak : <i>{{ $penjual->created_at->diffForHumans() }}</i></h5>
-                        @if ($penjual->name == 'admin'
-                             )
+                        @if ($penjual->name == 'admin')
                         <h5>Total Product : <i>{{ $penjual->product->count()-1 }}</i></h5>
                         @else
                         <h5>Total Products : <i>{{ $penjual->product->count() }}</i></h5>
                         @endif
-                       
+
+                        <a href="https://www.google.com/maps?q={!! $penjual->profile->latitude !!},{!! $penjual->profile->longitude !!}" class="btn btn-primary" target="__blank"><i class="fa fa-map"></i> Map</a>
+
                     </div>
                     <div class="col-md-4">
                         <h4>
@@ -48,14 +48,14 @@
                         </address>
                         <a href="{{ $penjual->profile->facebook }}" style="font-size:2em; color: #074aaf; margin-right:1em" target="__blank"><i class="bi bi-facebook"></i></a>
                         <a href="{{ $penjual->profile->instagram }}" style="font-size:2em; color: #c6018e" target="__blank"><i class="bi bi-instagram"></i></a>
-                    
+
                     </div>
                 </div>
                 @php
                 $product_unggulan = DB::table('products')->where('featured', true)->where('user_id', $penjual->id)->get();
                 @endphp
                 @if ($product_unggulan->count() > 0)
-                    
+
                 <div class="row bg-primary" style="padding:20px; border-radius:1em;box-shadow:5px 5px 20px 10px rgba(0,0,0,.15); margin-top:3em">
                     <h4 style="padding:0px 20px">Produk <span style="background:#fe9000; display:inline-block;padding:.5em; border-radius:1em">Unggulan</span> </h5>
                     <div class="row">
@@ -107,7 +107,7 @@
                 <div class="row">
                     <ul class="product-list grid-products equal-container">
                         @php
-                            $witems = Cart::instance('wishlist')->content()->pluck('id');	
+                            $witems = Cart::instance('wishlist')->content()->pluck('id');
                         @endphp
                         @foreach($products as $product)
                         @if ($product->image !== 'default-product.jpg' && $product->count() > 0)
@@ -121,9 +121,9 @@
                                     <div class="product-info">
                                         <a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="product-name"><span style="font-weight: bold; font-size:1.8em; line-height:1.5em">{{ $product->name }}</span></a>
                                         <div class="wrap-price"><span class="product-price">@currency($product->sale_price)</span></div>
-                         
+
                                         {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id}},'{{ $product->name }}',{{ $product->sale_price }})">Add To Cart</a> --}}
-                                        
+
                                         @if (Auth::check() && Auth::user()->utype == 'USR')
                                             @if(Auth::user()->status === 1)
                                             <div class="product-wish">
@@ -135,7 +135,7 @@
                                             </div>
                                             @endif
                                         @endif
-    
+
                                     </div>
                                 </div>
                             </li>
@@ -162,9 +162,9 @@
                     <div class="widget-content">
                         <ul class="list-category">
                         @foreach($categories as $category)
-                        <li class="category-item has-child-cate">							
-                            <a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>	
-                        </li>	
+                        <li class="category-item has-child-cate">
+                            <a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>
+                        </li>
                         @endforeach
                         </ul>
                     </div>
@@ -175,7 +175,7 @@
                     <div class="widget-content">
                         <ul class="products">
                             @foreach ($popular_products as $pp)
-                                
+
                             <li class="product-item">
                                 <div class="product product-widget-style">
                                     <div class="thumbnnail">

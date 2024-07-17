@@ -23,7 +23,7 @@
 
 						<h1 class="shop-title">All Producs by <i>' {{ $search }} ' </i></h1>
 						<a href="{{ route('product.shop') }}" class="btn btn-outline-primary"><i class="bi bi-x-square"></i> Clear Search</a>
-						<div class="wrap-right">
+						{{-- <div class="wrap-right">
 							<div class="sort-item orderby ">
 								<select name="orderby" class="use-chosen" wire:model="sorting">
 									<option value="default" selected="selected">Default sorting</option>
@@ -43,7 +43,7 @@
 									<option value="32">32 per page</option>
 								</select>
 							</div>
-						</div>
+						</div> --}}
 
 					</div>
                     @if($products->count() > 0)
@@ -60,12 +60,23 @@
 										</a>
 									</div>
 									<div class="product-info">
-										<a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="product-name"><span>{{ $product->name }}</span></a>
-										<div class="wrap-price"><span class="product-price">{{ $product->regular_price }}</span></div>
+										<a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="product-name">
+                                            <h4>{{ $product->name }}</h4>
+                                        </a>
+										<div class="wrap-price">
+                                            <span class="product-price">@currency($product->sale_price)</span>
+                                        </div>
+										<span style="
+                                        background:#00b67c;
+                                        color:white;
+                                        padding:.5em 1em;
+                                        line-height:2.5em;
+                                        border-radius:5px;
+                                        width:100%;
+                                        ">Jarak <b>{{ number_format($product->distance, 2) }} Km</b></span>
 										<a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="btn add-to-cart"><span>Lihat Detail</span></a>
-										
-										@php
-										$witems = Cart::instance('wishlist')->content()->pluck('id');	
+                                        @php
+										$witems = Cart::instance('wishlist')->content()->pluck('id');
 										@endphp
 
 										@if(Auth::check())
@@ -81,12 +92,12 @@
 
 											<div class="wrap-btn">
 												<div class="product-wish">
-													
+
 												</div>
 											</div>
 										</div>
 										@endif
-										
+
 									</div>
 								</div>
 							</li>
@@ -102,7 +113,7 @@
                         <div class="alert alert-warning" style="margin:30px 0">Product <i>{{ $search }}</i> tidak ditemukan</div>
                     @endif
 					<div class="wrap-pagination-info">
-						{{$products->links()}}
+						{{-- {{$products->links()}} --}}
 					</div>
 				</div>
 
@@ -113,8 +124,8 @@
 							<ul class="list-category">
 							@foreach($categories as $category)
 							<li class="category-item has-child-cate">
-								<a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>	
-							</li>	
+								<a href="{{ route('product.category', ['category_slug'=>$category->slug]) }}" class="cate-link">{{ $category->name }}</a>
+							</li>
 							@endforeach
 							</ul>
 						</div>

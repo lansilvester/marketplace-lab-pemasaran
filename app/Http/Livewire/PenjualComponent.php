@@ -14,8 +14,8 @@ use Gloudemans\Shoppingcart\Facades\Cart;
 
 class PenjualComponent extends Component
 {
-    public $sorting; 
-    public $pagesize; 
+    public $sorting;
+    public $pagesize;
     public $penjual;
 
     public function mount($penjual){
@@ -34,7 +34,7 @@ class PenjualComponent extends Component
         Cart::instance('wishlist')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
         $this->emitTo('wishlist-count-component', 'refreshComponent');
     }
-    
+
     public function removeFromWishlist($product_id){
         foreach(Cart::instance('wishlist')->content() as $witem){
             if($witem->id == $product_id){
@@ -66,7 +66,7 @@ class PenjualComponent extends Component
             $products = Product::where('user_id', $this->penjual)->paginate($this->pagesize);
         }
         $categories = Category::all();
-        
+
         $penjual = Product::where('user_id',$this->penjual)->get();
         $popular_products = Review::select('product_id')->distinct('rating','product_id')->where('rating','>',3)->limit(3)->get();
 

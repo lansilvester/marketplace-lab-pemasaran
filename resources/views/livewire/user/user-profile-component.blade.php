@@ -58,11 +58,23 @@
                                 <td>{{ $user->profile->country}}</td>
                             </tr>
                             <tr>
+                                <th>Map</th>
+                                <td>{!! $user->profile->map !!}</td>
+                            </tr>
+                            <tr>
+                                <th>Latitude , Longitude</th>
+                                <td>
+                                    {!! $user->profile->latitude !!},
+                                    {!! $user->profile->longitude !!}<br>
+                                    <a href="https://www.google.com/maps?q={!! $user->profile->latitude !!},{!! $user->profile->longitude !!}" class="btn btn-primary" target="__blank"><i class="fa fa-map"></i> Map</a>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>Dibuat Pada</th>
                                 <td>{{ $user->created_at->format('l, j-M-Y')}} ({{ $user->created_at->diffForHumans() }})</td>
                             </tr>
                         </table>
-                     
+
                         <a href="{{ route('user.editprofile') }}" class="btn btn-info pull-right"><i class="fa fa-pencil"></i> Update Profile</a>
                     </div>
                 </div>

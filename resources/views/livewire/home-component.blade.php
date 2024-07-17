@@ -54,6 +54,8 @@
                                                             {{ $lp->category->name }}
                                                         </span>
                                                     </a>
+                                                    <a href="https://maps.app.goo.gl/FB9Abi3PJ1zfpWCm9" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Detail Jarak</a>
+
                                                 <div class="wrap-price">
                                                     <span class="product-price">
                                                         {{ $lp->regular_price }}

@@ -11,7 +11,7 @@
                             <div class="item-content">
                                 <div class="wrap-contact-detail">
                                     <ul>
-                                       
+
                                         <li>
                                             <i class="fa fa-phone" aria-hidden="true"></i>
                                             <p class="contact-txt">{{ $settings->phone }}</p>
@@ -19,14 +19,14 @@
                                         <li>
                                             <i class="fa fa-envelope" aria-hidden="true"></i>
                                             <p class="contact-txt">{{ $settings->email }}</p>
-                                        </li>	
+                                        </li>
                                         <li>
                                             <i class="fa fa-map-marker" aria-hidden="true"></i>
                                             <p class="contact-txt">{{ $settings->address }}</p>
-                                        </li>										
+                                        </li>
                                     </ul>
                                 </div>
-                                <iframe src="{{ $settings->map }}" frameborder="0" width="100%" height="300px"></iframe>
+                                <iframe src="" frameborder="0" width="100%" height="300px"></iframe>
                             </div>
                         </div>
                     </div>

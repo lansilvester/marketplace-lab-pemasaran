@@ -47,13 +47,13 @@
                                 <img src="{{ asset('assets/images/products') }}/{{ $product->image }}" alt="{{ $product->name }}">
                             </li>
                             @php
-                                $images = explode(",", $product->images);    
+                                $images = explode(",", $product->images);
                             @endphp
                             @foreach ($images as $image)
                                 @if($image)
                                 <li data-thumb="{{ asset('assets/images/products') }}/{{ $image }}">
                                     <img src="{{ asset('assets/images/products') }}/{{ $image }}" alt="{{ $product->name }}">
-                                </li>  
+                                </li>
                                 @endif
                             @endforeach
                           </ul>
@@ -61,7 +61,7 @@
 
                     </div>
                     <div class="detail-info">
-                       
+
                         <div class="product-rating">
                             <style>
                                 .color-gray{
@@ -71,17 +71,17 @@
                                     color: rgb(211, 74, 0);
                                 }
                             </style>
-                          
-                            
+
+
                                 {{-- <a href="#" class="count-review">({{ $product->review->where('product_id',4)->count() }} review)</a> --}}
                         </div>
-                        
+
                         <br>
                         <b style="font-size:3em;line-height:2em" class="product-name">{{ $product->name }}</b>
                         <div class="short-desc">
                             {!! $product->short_description !!}
                         </div>
-                        
+
                         {{-- <div class="wrap-price"><span class="product-price">Rp. {{ $product->sale_price}}</span></div> --}}
                         <div class="wrap-price"><span class="product-price"> @currency($product->sale_price) </span></div>
                         <div class="stock-info in-stock">
@@ -105,19 +105,19 @@
                         {{-- <div class="quantity">
                             <span>Quantity:</span>
                             <div class="quantity-input">
-                                <input type="text" name="product-quatity" value="1" data-max="120" pattern="[0-9]*" wire:model="qty" >
+                                <input type="text" name="product-quatity" value="1" data-max="{{ $product->quantity }}" pattern="[0-{{ $product->quantity }}]*" wire:model="qty" >
                                 <a class="btn btn-reduce" href="#" wire:click.prevent="decreseQuantity"></a>
                                 <a class="btn btn-increase" href="#" wire:click.prevent="increaseQuantity"></a>
                             </div>
                         </div> --}}
-                        
+
                         @php
-                        $witems = Cart::instance('wishlist')->content()->pluck('id');	
+                        $witems = Cart::instance('wishlist')->content()->pluck('id');
                         @endphp
                         <div class="wrap-butons">
                             {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id }},'{{ $product->name }}', {{ $product->sale_price }})"><i class="fa fa-heart"></i> Tambah ke Wishlist</a> --}}
                             @if(Auth::check())
-                                @if (Auth::user()->utype == 'USR' && Auth::user()->status === 1)
+                                @if (Auth::user()->utype == 'USR' || Auth::user()->utype == 'PNJ')
                                     @if($witems->contains($product->id))
                                         <a href="#" class="btn add-to-cart" wire:click.prevent="removeFromWishlist({{ $product->id }})"><i class="fa fa-heart fill-heart"></i> &nbsp; Hapus dari Wishlist</a>
                                     @else
@@ -127,7 +127,7 @@
                             @endif
                             <div class="wrap-btn">
                                 <div class="product-wish">
-                                    
+
                                 </div>
                             </div>
                         </div>
@@ -164,26 +164,26 @@
                                 {!! $product->description !!}
                             </div>
                             {{-- Information box --}}
-                        
+
                             {{-- Review box --}}
                             <div class="tab-content-item " id="review">
-                                
+
                                 <div class="wrap-review-form">
-                                    
+
                                     @foreach ($reviews->where('product_id', $product->id) as $review)
-                                        
+
                                     <div id="comments">
                                         <h2 class="woocommerce-Reviews-title">Review untuk <span>{{ $review->product->name }}</span></h2>
                                         <ol class="commentlist">
                                             <li class="comment byuser comment-author-admin bypostauthor even thread-even depth-1" id="li-comment-20">
-                                                <div id="comment-20" class="comment_container"> 
+                                                <div id="comment-20" class="comment_container">
                                                     <img alt="" src="{{ asset('assets/images/profile') }}/{{ $review->user->profile->image }}" height="80" width="80">
                                                     <div class="comment-text">
-                                                        
+
                                                         <span><b>{{ $review->rating }}</b></span><i class="bi bi-star-fill" style="color:#ffd607"></i> of 5
 
-                                                        <p class="meta"> 
-                                                            <strong class="woocommerce-review__author">{{ $review->user->name }}</strong> 
+                                                        <p class="meta">
+                                                            <strong class="woocommerce-review__author">{{ $review->user->name }}</strong>
                                                             <span class="woocommerce-review__dash">–</span>
                                                             <time class="woocommerce-review__published-date" datetime="{{ $review->created_at }}" >{{ $review->created_at->diffForHumans() }}</time>
                                                         </p>
@@ -194,12 +194,13 @@
                                                 </div>
                                             </li>
                                         </ol>
-                                    </div><!-- #comments -->
+                                    </div>
+                                    <!-- #comments -->
                                     @endforeach
-{{-- 
+{{--
                                     <div id="review_form_wrapper">
                                         <div id="review_form">
-                                            <div id="respond" class="comment-respond"> 
+                                            <div id="respond" class="comment-respond">
 
                                                 <form action="#" method="post" id="commentform" class="comment-form" novalidate="">
                                                     <p class="comment-notes">
@@ -208,7 +209,7 @@
                                                     <div class="comment-form-rating">
                                                         <span>Your rating</span>
                                                         <p class="stars">
-                                                            
+
                                                             <label for="rated-1"></label>
                                                             <input type="radio" id="rated-1" name="rating" value="1">
                                                             <label for="rated-2"></label>
@@ -222,11 +223,11 @@
                                                         </p>
                                                     </div>
                                                     <p class="comment-form-author">
-                                                        <label for="author">Name <span class="required">*</span></label> 
+                                                        <label for="author">Name <span class="required">*</span></label>
                                                         <input id="author" name="author" type="text" value="">
                                                     </p>
                                                     <p class="comment-form-email">
-                                                        <label for="email">Email <span class="required">*</span></label> 
+                                                        <label for="email">Email <span class="required">*</span></label>
                                                         <input id="email" name="email" type="email" value="" >
                                                     </p>
                                                     <p class="comment-form-comment">
@@ -253,7 +254,7 @@
             </div>
 
             <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 sitebar">
-                
+
                 <div class="widget mercado-widget widget-product">
                     <h2 class="widget-title">Popular Products</h2>
                     <div class="widget-content" wire:ignore>
@@ -283,7 +284,7 @@
             {{-- <p>{{ $product->where('rstatus',1)->get() }}</p> --}}
 
             @if ($related_products->count() > 1)
-                
+
             <div class="single-advance-box col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <div class="wrap-show-advance-info-box style-1 box-in-site">
                     <h3 class="title-box">Related Products</h3>
@@ -316,12 +317,12 @@
                     </div>
                 </div>
             </div>
-            
+
             @endif
 
         </div>
     </div>
-   
+
 </main>
 
 @push('scripts')

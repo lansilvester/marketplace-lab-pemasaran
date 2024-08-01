@@ -1,25 +1,25 @@
 <div style="min-height:80vh">
     <style>
-  nav{
-      margin-top:50px;
-  }
-  nav svg{
-      height: 20px;
-  }
-  nav .hidden{
-      display: block !important;
-      margin-top:3em;
-  }
-  .bg-success{
-        background:#00a045;
+    nav{
+        margin-top:50px;
     }
-    .bg-primary{
-        background:#0081c6;
+    nav svg{
+        height: 20px;
     }
-    .bg-info{
-        background: #00accf;
+    nav .hidden{
+        display: block !important;
+        margin-top:3em;
     }
-</style>
+    .bg-success{
+            background:#00a045;
+        }
+        .bg-primary{
+            background:#0081c6;
+        }
+        .bg-info{
+            background: #00accf;
+        }
+    </style>
 <div class="container-fluid" style="padding: 30px">
     @if($users_unapprove->count() > 0)
     <div class="row">
@@ -41,7 +41,7 @@
                         </thead>
                         <tbody>
                             @php
-                                $nomor = 1;   
+                                $nomor = 1;
                             @endphp
                             @forelse($users_unapprove as $user_unapprove)
                             <tr>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.accuser', ['user_id'=>$user_unapprove->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
-    
+
                                     {{-- <form action="{{ route('admin.usersapprove', ['user_id'=>$user_unapprove->id]) }}" method="post">
                                         <button type="submit" class="btn btn-success"><i class="bi bi-clipboard2-check"></i> Terima</button>
                                     </form> --}}
@@ -111,7 +111,7 @@
                     <div class="alert alert-success" role="alert">
                         {{ Session::get('active') }}
                     </div>
-                        @endif    
+                        @endif
                     <table class="table table-striped table-border table-hover">
                         <thead>
                             <tr>
@@ -127,7 +127,7 @@
                         </thead>
                         <tbody>
                             @php
-                                $no = 1;   
+                                $no = 1;
                             @endphp
                             @foreach($users as $u)
                             @if($u->count() > 0)
@@ -144,7 +144,7 @@
                                     <td>{{ $u->email }}</td>
                                     <td>{{ $u->created_at->format('l, d-M-Y') }} <small><i>({{ $u->created_at->diffForHumans() }})</i></small></td>
                                     <td>
-                                    
+
                                         @if ($u->utype == 'ADM')
                                         <span class="badge bg-primary">Admin</span>
                                         @endif
@@ -162,7 +162,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if(Auth::user()->utype == 'ADM')  
+                                        @if(Auth::user()->utype == 'ADM')
                                         <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
                                         <a href="{{ route('admin.edituser', ['user_id'=>$u->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
                                         <a href="#" onclick="confirm('Are you sure want to delete this user?') || event.stopImmediatePropagation()" class="btn btn-danger" wire:click.prevent="deleteUser({{ $u->id }})"><i class="fa fa-trash"></i></a>
@@ -171,7 +171,7 @@
                                         @if (Auth::user()->utype !== 'ADM')
                                             @if ($u->utype == 'ADM')
                                             <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
-                                                
+
                                             @endif
                                             @if($u->utype !== 'ADM')
                                             <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
@@ -179,7 +179,7 @@
                                             <a href="#" onclick="confirm('Are you sure want to delete this user?') || event.stopImmediatePropagation()" class="btn btn-danger" wire:click.prevent="deleteUser({{ $u->id }})"><i class="fa fa-trash"></i></a>
                                             @endif
                                         @endif
-                                        
+
                                     </td>
                                 </tr>
                             @else

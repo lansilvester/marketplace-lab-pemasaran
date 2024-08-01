@@ -50,21 +50,16 @@ class SearchComponent extends Component
 
     public function calculateDistance($lat1, $lon1, $lat2, $lon2) {
         $earthRadius = 6371; // Radius bumi dalam kilometer
-
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
-
         $a = sin($dLat / 2) * sin($dLat / 2) + cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * sin($dLon / 2) * sin($dLon / 2);
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
         $distance = $earthRadius * $c; // Jarak dalam kilometer
-
         return $distance;
     }
 
     public function render()
     {
-
         $user = Auth::user();
         $userLatitude = $user->profile->latitude;
         $userLongitude = $user->profile->longitude;
@@ -89,21 +84,19 @@ class SearchComponent extends Component
             ->where('category_id', 'like','%'.$this->product_cat_id.'%')
             ->get();
         }
-
         $popular_product = Review::select('product_id')->distinct('rating','product_id')->where('rating','>',3)->limit(3)->get();
 
 
-                // Menghitung jarak dari pengguna ke setiap produk
+        // Menghitung jarak dari pengguna ke setiap produk
         foreach ($products as $product) {
             $productLatitude = $product->user->profile->latitude; // Ganti dengan atribut latitude penjual
             $productLongitude = $product->user->profile->longitude; // Ganti dengan atribut longitude penjual
 
             $distance = $this->calculateDistance($userLatitude, $userLongitude, $productLatitude, $productLongitude);
 
-            $product->distance = $distance; // Menambahkan atribut jarak ke objek produk
+            $product->distance = $distance;
         }
 
-        // Urutkan produk berdasarkan jarak terdekat
         $products = $products->sortBy('distance');
 
         $categories = Category::all();

@@ -8,6 +8,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Redirect;
 
 class AdminUsersComponent extends Component
 {
@@ -20,7 +21,12 @@ class AdminUsersComponent extends Component
         $profile->delete();
         session()->flash('message', 'User has been deleted');
     }
-    
+    public function mount()
+    {
+        if (Auth::user()->utype !== 'ADM') {
+            return Redirect::to('/');
+        }
+    }
     public function render()
     {
         $userProfile = Profile::where('user_id', Auth::user()->id)->first();

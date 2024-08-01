@@ -28,7 +28,7 @@ class HomeComponent extends Component
         $sliders = HomeSlider::where('status', 1)->get();
         $lproducts = Product::orderBy('created_at','DESC')->get()->take(8);
         $category = HomeCategory::find(1);
-        
+
         if ($category !== null) {
             $cats = explode(',',$category->sel_categories);
             $categories = Category::whereIn('id', $cats)->get();
@@ -41,7 +41,7 @@ class HomeComponent extends Component
 
         $categories = Category::whereIn('id', $cats)->get();
         $product_populer = Review::select('product_id')->distinct()->where('rating','>',3)->limit(4)->get();
-        
+
         if(Auth::check()){
             $userProfile = Profile::where('user_id', Auth::user()->id)->first();
             if(!$userProfile){
@@ -52,6 +52,7 @@ class HomeComponent extends Component
         }
 
         $no_of_products = $category->no_of_products;
+
         return view('livewire.home-component',[
             'sliders'=>$sliders,
             'lproducts' => $lproducts,

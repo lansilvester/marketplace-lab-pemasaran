@@ -16,7 +16,7 @@ class CategoryFactory extends Factory
      */
     public function definition()
     {
-        $category_name = 'Minuman Lokal';
+        $category_name = 'Product Kelapa';
         $slug = Str::slug($category_name);
         return [
             'name' => $category_name,

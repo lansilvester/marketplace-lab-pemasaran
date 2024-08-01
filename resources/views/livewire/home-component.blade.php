@@ -1,7 +1,6 @@
 
 	<main id="main" style="min-height: 80vh">
 		<div class="container">
-
 			<!--MAIN SLIDE-->
 			<div class="wrap-main-slide">
 				<div class="slide-carousel owl-carousel style-nav-1" data-items="1" data-loop="1" data-nav="true" data-dots="false">
@@ -23,7 +22,25 @@
 			</div>
 
 			<!--BANNER-->
-
+            @if(Auth::check())
+                @if (Auth::user()->profile->latitude == '' && Auth::user()->profile->longitude == '' && Auth::user()->utype !== 'ADM')
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="alert alert-info text-center">
+                        <h1>
+                            <i class="fa fa-info-circle"></i>
+                            <br>
+                            Segera lengkapi profile
+                        </h1>
+                            <p> Mohon untuk melengkapi profile anda<br><br>
+                                <a href="{{ route('user.profile') }}" class="btn btn-info"><i class="fa fa-user"></i> Profile</a>
+                            </p>
+                        </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            @else
 			{{-- Latest Products --}}
             <div class="row">
                 <div class="wrap-show-advance-info-box style-1">
@@ -54,7 +71,7 @@
                                                             {{ $lp->category->name }}
                                                         </span>
                                                     </a>
-                                                    <a href="https://maps.app.goo.gl/FB9Abi3PJ1zfpWCm9" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Detail Jarak</a>
+                                                    {{-- <a href="https://maps.app.goo.gl/FB9Abi3PJ1zfpWCm9" class="btn btn-primary" target="_blank" rel="noopener noreferrer">Detail Jarak</a> --}}
 
                                                 <div class="wrap-price">
                                                     <span class="product-price">
@@ -124,6 +141,26 @@
                     </div>
                 </div>
             </div>
+                @endif
+            @else
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <div class="alert alert-info text-center">
+                        <h1>
+                            <i class="fa fa-info-circle"></i>
+                            <br>
+                            Login sekarang
+                        </h1>
+                            <p> Silahkan melakukan login<br> Belum punya akun? <a href="{{ route('register') }}"><b>Daftar</b></a> Sekarang<br><br>
+                                <a href="{{ route('login') }}" class="btn btn-info">Login</a>
+                            </p>
+                        </div>
+                </div>
+                <div class="col-md-3"></div>
+            </div>
+            @endif
+
 		</div>
 
 	</main>

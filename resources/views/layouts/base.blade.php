@@ -19,6 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ asset('assets/css/color-01.css') }}">
 	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 </head>
 <body class="home-page home-01">
     <div class="mercado-clone-wrap">
@@ -135,9 +136,12 @@
 														<li class="menu-item">
 															<a href="{{ route('user.profile') }}"><i class="bi bi-person"></i> Profile</a>
 														</li>
+
+														<li class="menu-item">
+															<a title="Categories" href="{{ route('admin.transaksi') }}"><i class="bi bi-minecart-loaded"></i> Daftar Transaksi</a>
+														</li>
 														<li class="menu-item">
 															<a title="Categories" href="{{ route('admin.categories') }}"><i class="bi bi-list-check"></i> Categories</a>
-
 														</li>
 														<li class="menu-item">
 															<a title="Reviews" href="{{ route('admin.reviews', ['user_id'=>Auth::user()->id]) }}"><i class="bi bi-pen"></i> Reviews</a>
@@ -145,7 +149,6 @@
 
 														<li class="menu-item">
 															<a title="Categories" href="{{ route('admin.products') }}"><i class="bi bi-bag"></i> Products</a>
-
 														</li>
 														<li class="menu-item">
 															<a href="{{ route('user.changepassword') }}"><i class="fa fa-key"></i> Ganti Password</a>
@@ -165,6 +168,9 @@
 													<li class="menu-item">
 														<a href="{{ route('user.profile') }}"><i class="bi bi-person"></i> Profile</a>
 													</li>
+                                                    <li class="menu-item">
+                                                        <a href="{{ route('product.order') }}"><i class="fa fa-list"></i> Pesanan saya</a>
+                                                    </li>
 													<li class="menu-item">
 														<a href="{{ route('user.changepassword') }}"><i class="fa fa-key"></i> Ganti Password</a>
 													</li>
@@ -217,11 +223,11 @@
 						@livewire('header-search-component')
 
 						<div class="wrap-icon right-section">
-							@if(Auth::check() && Auth::user()->utype == 'USR')
-								@if (Auth::user()->status === 1)
+							@if (Auth::check() && Auth::user()->status === 1)
 									@livewire('wishlist-count-component')
 									@livewire('cart-count-component')
-								@endif
+
+
 							@endif
 							<div class="wrap-icon-section show-up-after-1024">
 								<a href="#" class="mobile-navigation">
@@ -268,9 +274,9 @@
 	@livewire('footer-component')
 	<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
 
+	<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 	<script src="{{ asset('assets/js/jquery-1.12.4.minb8ff.js?ver=1.12.4') }}"></script>
 	<script src="{{ asset('assets/js/jquery-ui-1.12.4.minb8ff.js?ver=1.12.4') }}"></script>
-	<script src="{{ asset('assets/js/bootstrap.min.js') }}"></script>
 	<script src="{{ asset('assets/js/jquery.flexslider.js') }}"></script>
 	{{-- <script src="{{ asset('assets/js/chosen.jquery.min.js') }}"></script> --}}
 	<script src="{{ asset('assets/js/owl.carousel.min.js') }}"></script>
@@ -279,7 +285,6 @@
 	<script src="{{ asset('assets/js/functions.js') }}"></script>
 	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 	<script src="https://cdn.tiny.cloud/1/j21h7jo1xpes3qhzsz5gpo03z7d8wlqjim0d2d18f2k6dkni/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
-
     @livewireScripts
 
 	@stack('scripts')

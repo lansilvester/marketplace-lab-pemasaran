@@ -37,16 +37,15 @@
             }
         </style>
         <div class="row">
-           
+
             @if (Session::has('success_message'))
                 <div class="alert alert-success">{{ Session::get('success_message') }}</div>
             @endif
             @if(Auth::check())
                 @if(Cart::instance('wishlist')->content()->count() > 0)
                 <ul class="product-list grid-products equal-container">
-                    {{-- {{ dd(Cart::instance('wishlist')->content()) }} --}}
                     @foreach(Cart::instance('wishlist')->content() as $item)
-                        
+
                     <li class="col-lg-3 col-md-6 col-sm-6 col-xs-6 ">
                         <div class="product product-style-3 equal-elem ">
                             <div class="product-thumnail">
@@ -55,11 +54,13 @@
                                 </a>
                             </div>
                             <div class="product-info">
-                                <a href="{{ route('product.details',['slug'=>$item->model->slug]) }}" class="product-name"><span>{{ $item->model->name }}</span></a>
+                                <a href="{{ route('product.details',['slug'=>$item->model->slug]) }}" class="product-name"><h3>{{ $item->model->name }}</h3></a>
                                     <div class="wrap-price"><span class="product-price">@currency($item->model->sale_price)</span></div>
-                                    {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="moveProductFromWishlistToCart('{{ $item->rowId }}')">Move To Cart</a> --}}
+                                    <a href="#" class="btn add-to-cart" wire:click.prevent="moveProductFromWishlistToCart('{{ $item->rowId }}')">Move To Cart</a>
+
                                     <div class="product-wish">
                                 </div>
+                                <a href="#" id="add-wishlist" class="btn add-to-cart" wire:click.prevent="removeFromWishlist({{ $item->model->id }})"><i class="fa fa-heart fill-heart"></i> &nbsp; Hapus dari Wishlist</a>
                                 @if (Auth::check())
                                 {{-- <b>
                                     @if($review->product_id !== $item->id && $review->product_id !== NULL)
@@ -68,14 +69,13 @@
                                     <a href="">Edit</a>
                                     @endif
                                 </b> --}}
-                               
+
                                 <div class="wrap-price"><span class="product-price"><a href="{{ route('user.review',['item_id'=>$item->id]) }}">Review</a></span></div>
 
                                 @else
                                 <p>Please login for review</p>
                                 @endif
-                                    <a href="#" id="add-wishlist" class="btn add-to-cart" wire:click.prevent="removeFromWishlist({{ $item->model->id }})"><i class="fa fa-heart fill-heart"></i> &nbsp; Hapus dari Wishlist</a>
-                            
+
                             </div>
                         </div>
                     </li>

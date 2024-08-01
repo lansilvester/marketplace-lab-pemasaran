@@ -8,6 +8,7 @@
             <ul>
                 <li class="item-link"><a href="/" class="link">Home</a></li>
                 <li class="item-link"><a href="{{ route('product.shop') }}"><span>Shop</span></a></li>
+                <li class="item-link"><a href="/" class="link">Penjual</a></li>
                 <li class="item-link">
                     <span>
                         {{ $penjual->name }}

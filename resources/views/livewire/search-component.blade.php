@@ -82,7 +82,7 @@
 										@if(Auth::check())
 										<div class="wrap-butons">
 											{{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id }},'{{ $product->name }}', {{ $product->sale_price }})"><i class="fa fa-heart"></i> Tambah ke Wishlist</a> --}}
-											@if (Auth::user()->utype == 'USR')
+											@if (Auth::user()->utype == 'USR' && Auth::user()->utype == 'PNJ')
 												@if($witems->contains($product->id))
 													<a href="#" class="btn add-to-cart" wire:click.prevent="removeFromWishlist({{ $product->id }})"><i class="fa fa-heart fill-heart"></i> &nbsp; Hapus dari Wishlist</a>
 												@else

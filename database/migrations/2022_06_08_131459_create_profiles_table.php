@@ -16,7 +16,7 @@ class CreateProfilesTable extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('user_id')->unsigned();
-            $table->string('image')->default('default.jpg');
+            $table->string('image')->default('default.jpg')->nullable();
             $table->string('mobile')->nullable();
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();

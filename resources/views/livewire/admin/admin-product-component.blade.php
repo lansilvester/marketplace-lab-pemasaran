@@ -19,7 +19,7 @@
                         <div class="row">
                             <div class="col-md-6 p-3">
                                 @if (Auth::user()->utype == 'PNJ' || Auth::user()->utype == 'PBN'  )
-                                {{ Auth::user()->utype }}
+
                                 <h3>Semua product  <span class="badge" style="font-size:1.2em; margin-left:10px">{{ Auth::user()->name }}</span></h3>
                                 @else
                                 <h3>Semua Product <span class="badge" style="font-size:1.2em; margin-left:10px">{{ Auth::user()->name }}</span></h3>

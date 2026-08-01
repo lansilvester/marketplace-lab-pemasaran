@@ -59,7 +59,9 @@ class UserEditProfileComponent extends Component
     {
         $user = Auth::user();
         if ($this->image) {
-            Storage::delete('public/profile_photos/' . $this->image);
+            if ($this->image !== 'default.jpg') {
+                Storage::delete('profile/' . $this->image);
+            }
             $this->image = null;
             $user->profile->image = null;
             $user->profile->save();
@@ -82,10 +84,8 @@ class UserEditProfileComponent extends Component
             $user->name = $this->name;
             $user->save();
             if($this->newimage){
-                if($this->image){
-                    if($this->image !== 'default.jpg'){
-                        unlink('assets/images/profile/'. $this->image);
-                    }
+                if($this->image && $this->image !== 'default.jpg'){
+                    Storage::delete('profile/'. $this->image);
                 }
                 $imageName = $user->email.'_'.Carbon::now()->timestamp. '.'.$this->newimage->extension();
                 $this->newimage->storeAs('profile', $imageName);

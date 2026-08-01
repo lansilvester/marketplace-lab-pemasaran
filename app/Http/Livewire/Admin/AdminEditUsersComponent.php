@@ -9,6 +9,7 @@ use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class AdminEditUsersComponent extends Component
 {
@@ -85,10 +86,8 @@ class AdminEditUsersComponent extends Component
         $user->status = $this->status;
         $user->save();
         if($this->newimage){
-            if($this->image){
-                if($this->image !== 'default.jpg'){
-                    unlink('assets/images/profile/'. $this->image);
-                }
+            if($this->image && $this->image !== 'default.jpg'){
+                Storage::delete('profile/'. $this->image);
             }
             $imageName = $user->email.'_'.Carbon::now()->timestamp. '.'.$this->newimage->extension();
             $this->newimage->storeAs('profile', $imageName);

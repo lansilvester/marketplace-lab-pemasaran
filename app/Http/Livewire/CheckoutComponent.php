@@ -2,26 +2,28 @@
 
 namespace App\Http\Livewire;
 
-use Carbon\Carbon;
-use Livewire\Component;
 use App\Models\Order;
 use App\Models\OrderItem;
-use Gloudemans\Shoppingcart\Facades\Cart;
-use Livewire\WithFileUploads;
-use Illuminate\Support\Facades\Auth;
+use App\Support\Cart;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Component;
+use Livewire\WithFileUploads;
 
 class CheckoutComponent extends Component
 {
     use WithFileUploads;
 
     public $images = [];
+
     public $imagePreviews = [];
 
     public function rules()
     {
         return [
-            'images.*' => 'required|mimes:jpeg,jpg,png'
+            'images' => 'required|array|min:1',
+            'images.*' => 'mimes:jpeg,jpg,png',
         ];
     }
 
@@ -46,20 +48,25 @@ class CheckoutComponent extends Component
 
         $this->validate();
 
-        $order = new Order();
+        if (Cart::instance('cart')->count() === 0) {
+            session()->flash('error_message', 'Keranjang belanja masih kosong.');
+
+            return redirect()->route('product.cart');
+        }
+
+        $order = new Order;
         $order->user_id = Auth::id();
         $order->total = (float) str_replace(',', '', Cart::instance('cart')->total());
         $order->status = 'pending';
 
         // Mendapatkan seller_id dari produk pertama di keranjang
         $firstItem = Cart::instance('cart')->content()->first();
-        $order->seller_id = $firstItem->model->user_id; // Pastikan model produk memiliki relasi yang benar ke penjual
-
+        $order->seller_id = $firstItem->model?->user_id; // Pastikan model produk memiliki relasi yang benar ke penjual
 
         // Simpan semua gambar yang diupload
         $imageNames = [];
         foreach ($this->images as $image) {
-            $imageName = Carbon::now()->timestamp . '_' . uniqid() . '.' . $image->extension();
+            $imageName = Carbon::now()->timestamp.'_'.uniqid().'.'.$image->extension();
             $image->storeAs('orders', $imageName);
             $imageNames[] = $imageName; // Menyimpan nama gambar ke array
         }
@@ -70,17 +77,18 @@ class CheckoutComponent extends Component
         $order->save();
 
         foreach (Cart::instance('cart')->content() as $item) {
-            $orderItem = new OrderItem();
+            $orderItem = new OrderItem;
             $orderItem->order_id = $order->id;
             $orderItem->product_id = $item->id;
             $orderItem->quantity = $item->qty;
-            $orderItem->total = $item->total;
+            $orderItem->total = $item->price * $item->qty;
             $orderItem->save();
         }
 
         Cart::instance('cart')->destroy();
 
         session()->flash('message', 'Berhasil melakukan pembayaran. Menunggu Konfirmasi');
+
         return redirect()->route('product.order');
     }
 

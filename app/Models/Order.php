@@ -10,8 +10,13 @@ class Order extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'seller_id','total', 'status', 'payment_proof'
+        'user_id', 'seller_id', 'total', 'status', 'payment_proof',
     ];
+
+    public function getPaymentProofAttribute($value)
+    {
+        return $value ? json_decode($value, true) : [];
+    }
 
     public function user()
     {
@@ -27,5 +32,4 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'id'); // atau 'admin_id'
     }
-
 }

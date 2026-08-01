@@ -40,7 +40,7 @@
 									@if(Auth::user()->status === 1)
 										@if(Auth::user()->utype==='ADM')
 											<li class="menu-item menu-item-has-children parent">
-											<a href="" onclick="event.preventDefault()">My Account {{Auth::user()->name}} <i class="fa fa-angle-down"></i></a>
+											<a	 href="" onclick="event.preventDefault()">My Account {{Auth::user()->name}} <i class="fa fa-angle-down"></i></a>
 												<ul class="submenu">
 													{{-- <li class="menu-item">
 														<a href="{{ route('admin.dashboard') }}">Dashboard</a>

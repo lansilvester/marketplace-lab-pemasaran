@@ -6,6 +6,7 @@ use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 
 class AdminProductComponent extends Component
@@ -14,13 +15,13 @@ class AdminProductComponent extends Component
     public function deleteProduct($id){
         $product = Product::find($id);
         if($product->image){
-            unlink('assets/images/products'.'/'.$product->image);
+            Storage::delete('products/'.$product->image);
         }
         if($product->images){
             $images = explode(",",$product->images);
             foreach($images as $image){
                 if($image){
-                    unlink('assets/images/products'.'/'.$image);
+                    Storage::delete('products/'.$image);
                 }
             }
         }

@@ -62,16 +62,9 @@
                                         </td>
                                         <td>
                                             @if ($transaction->payment_proof)
-                                                @php
-                                                    $paymentProofs = json_decode($transaction->payment_proof);
-                                                @endphp
-                                                @if (is_array($paymentProofs))
-                                                    @foreach ($paymentProofs as $proof)
-                                                        <img src="{{ asset('assets/images/orders/' . $proof) }}" alt="Bukti Pembayaran" width="50" class="payment-proof">
-                                                    @endforeach
-                                                @else
-                                                    <span>Tidak ada bukti yang valid</span>
-                                                @endif
+                                                @foreach ($transaction->payment_proof as $proof)
+                                                    <img src="{{ asset('assets/images/orders/' . $proof) }}" alt="Bukti Pembayaran" width="50" class="payment-proof">
+                                                @endforeach
                                             @else
                                                 <span>Tidak ada bukti</span>
                                             @endif

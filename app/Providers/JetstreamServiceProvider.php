@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Actions\Jetstream\DeleteUser;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Jetstream\Jetstream;
 
@@ -28,6 +29,11 @@ class JetstreamServiceProvider extends ServiceProvider
         $this->configurePermissions();
 
         Jetstream::deleteUsersUsing(DeleteUser::class);
+
+        foreach (glob(resource_path('views/components/*.blade.php')) ?: [] as $file) {
+            $name = basename($file, '.blade.php');
+            Blade::component('components.'.$name, 'jet-'.$name);
+        }
     }
 
     /**

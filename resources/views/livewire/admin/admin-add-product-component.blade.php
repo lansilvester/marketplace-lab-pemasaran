@@ -134,6 +134,17 @@
 @push('scripts')
 <script>
         $(function(){
+            var syncPlainTextarea = function(selector, property){
+                var el = $(selector);
+                if (!el.length) return;
+                el.on('input keyup change', function(){
+                    @this.set(property, $(this).val());
+                });
+            };
+
+            syncPlainTextarea('#short_description', 'short_description');
+            syncPlainTextarea('#description', 'description');
+
             tinymce.init({
                 selector: '#short_description',
                 apiKey:"j21h7jo1xpes3qhzsz5gpo03z7d8wlqjim0d2d18f2k6dkni",

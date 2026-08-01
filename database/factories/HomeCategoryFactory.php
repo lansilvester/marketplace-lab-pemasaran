@@ -13,14 +13,13 @@ class HomeCategoryFactory extends Factory
      * @return array
      */
     protected $model = HomeCategory::class;
+
     public function definition()
     {
         return [
-            'sel_categories'=>'Minuman Lokal',
-            'no_of_products'=>100,
-            'created_at'=> now()
+            'sel_categories' => '1',
+            'no_of_products' => 100,
+            'created_at' => now(),
         ];
     }
-
-
 }

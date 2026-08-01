@@ -35,7 +35,7 @@
 
 				<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 main-content-area">
                     @if(Auth::check())
-                        @if (Auth::user()->profile->latitude == ''  && Auth::user()->profile->status !== '1' && Auth::user()->profile->longitude == '' && Auth::user()->utype !== 'ADM')
+                        @if (Auth::user()->profile && Auth::user()->profile->latitude == ''  && Auth::user()->profile->status !== '1' && Auth::user()->profile->longitude == '' && Auth::user()->utype !== 'ADM')
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
@@ -106,7 +106,7 @@
                                                             padding:5px;
                                                             border-radius:10px;
                                                         ">
-                                                        @if($product->user->profile->image)
+                                                        @if($product->user->profile && $product->user->profile->image)
                                                             <img src="{{ asset('assets/images/profile') }}/{{ $product->user->profile->image }}" width="50px" alt="">
                                                             @else
 

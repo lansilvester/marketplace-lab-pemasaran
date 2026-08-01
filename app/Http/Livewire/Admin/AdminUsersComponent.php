@@ -7,18 +7,20 @@ use App\Models\Profile;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
-use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Storage;
+use App\Support\Cart;
 use Illuminate\Support\Facades\Redirect;
 
 class AdminUsersComponent extends Component
 {
     use WithPagination;
     public function deleteUser($id){
-        $profile = User::findOrFail($id);
-        if($profile->profile->image !== 'default.jpg'){
-            unlink('assets/images/profile/'. $this->image);
+        $user = User::findOrFail($id);
+        $image = $user->profile->image;
+        if($image && $image !== 'default.jpg'){
+            Storage::delete('profile/'. $image);
         }
-        $profile->delete();
+        $user->delete();
         session()->flash('message', 'User has been deleted');
     }
     public function mount()

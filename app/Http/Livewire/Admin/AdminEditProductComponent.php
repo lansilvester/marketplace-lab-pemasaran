@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class AdminEditProductComponent extends Component
 {
@@ -97,7 +98,9 @@ class AdminEditProductComponent extends Component
         $product->quantity = $this->quantity;
 
         if($this->newimage){
-            unlink('assets/images/products'.'/'.$product->image);
+            if($product->image){
+                Storage::delete('products/'.$product->image);
+            }
             $imageName = Carbon::now()->timestamp. '.' .$this->newimage->extension();
             $this->newimage->storeAs('products', $imageName);
             $product->image = $imageName;
@@ -108,7 +111,7 @@ class AdminEditProductComponent extends Component
                 $images = explode(",",$product->images);
                 foreach($images as $image){
                     if($image){
-                        unlink('assets/images/products'.'/'.$image);
+                        Storage::delete('products/'.$image);
 
                     }
                 }

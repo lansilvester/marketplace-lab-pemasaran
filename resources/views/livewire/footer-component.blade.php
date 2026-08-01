@@ -14,15 +14,15 @@
 
                                         <li>
                                             <i class="fa fa-phone" aria-hidden="true"></i>
-                                            <p class="contact-txt">{{ $settings->phone }}</p>
+                                            <p class="contact-txt">{{ $settings?->phone }}</p>
                                         </li>
                                         <li>
                                             <i class="fa fa-envelope" aria-hidden="true"></i>
-                                            <p class="contact-txt">{{ $settings->email }}</p>
+                                            <p class="contact-txt">{{ $settings?->email }}</p>
                                         </li>
                                         <li>
                                             <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                            <p class="contact-txt">{{ $settings->address }}</p>
+                                            <p class="contact-txt">{{ $settings?->address }}</p>
                                         </li>
                                     </ul>
                                 </div>
@@ -62,11 +62,11 @@
                             <div class="item-content">
                                 <div class="wrap-list-item social-network">
                                     <ul>
-                                        <li><a href="{{ $settings->twitter }}" class="link-to-item"><i class="fa fa-twitter" aria-hiddern="true"></i></a></li>
-                                        <li><a href="{{ $settings->facebook }}" class="link-to-item"><i class="fa fa-facebook" aria-hiddern="true"></i></a></li>
-                                        <li><a href="{{ $settings->pinterest }}" class="link-to-item"><i class="fa fa-pinterest" aria-hiddern="true"></i></a></li>
-                                        <li><a href="{{ $settings->instagram }}" class="link-to-item"><i class="fa fa-instagram" aria-hiddern="true"></i></a></li>
-                                        <li><a href="{{ $settings->youtube }}" class="link-to-item"><i class="fa fa-youtube" aria-hiddern="true"></i></a></li>
+                                        <li><a href="{{ $settings?->twitter }}" class="link-to-item"><i class="fa fa-twitter" aria-hiddern="true"></i></a></li>
+                                        <li><a href="{{ $settings?->facebook }}" class="link-to-item"><i class="fa fa-facebook" aria-hiddern="true"></i></a></li>
+                                        <li><a href="{{ $settings?->pinterest }}" class="link-to-item"><i class="fa fa-pinterest" aria-hiddern="true"></i></a></li>
+                                        <li><a href="{{ $settings?->instagram }}" class="link-to-item"><i class="fa fa-instagram" aria-hiddern="true"></i></a></li>
+                                        <li><a href="{{ $settings?->youtube }}" class="link-to-item"><i class="fa fa-youtube" aria-hiddern="true"></i></a></li>
                                     </ul>
                                 </div>
                             </div>

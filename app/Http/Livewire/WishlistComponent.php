@@ -5,7 +5,7 @@ namespace App\Http\Livewire;
 use App\Models\Review;
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use Gloudemans\Shoppingcart\Facades\Cart;
+use App\Support\Cart;
 
 class WishlistComponent extends Component
 {
@@ -14,7 +14,7 @@ class WishlistComponent extends Component
         foreach(Cart::instance('wishlist')->content() as $witem){
             if($witem->id == $product_id){
                 Cart::instance('wishlist')->remove($witem->rowId);
-                $this->emitTo('wishlist-count-component', 'refreshComponent');
+                $this->dispatch('refreshComponent')->to('wishlist-count-component');
                 return;
             }
         }
@@ -23,8 +23,8 @@ class WishlistComponent extends Component
         $item = Cart::instance('wishlist')->get($rowId);
         Cart::instance('wishlist')->remove($rowId);
         Cart::instance('cart')->add($item->id, $item->name, 1, $item->price)->associate('App\Models\Product');
-        $this->emitTo('wishlist-count-component', 'refreshComponent');
-        $this->emitTo('cart-count-component', 'refreshComponent');
+        $this->dispatch('refreshComponent')->to('wishlist-count-component');
+        $this->dispatch('refreshComponent')->to('cart-count-component');
     }
     public function render()
     {

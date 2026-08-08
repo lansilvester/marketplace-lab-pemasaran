@@ -39,16 +39,19 @@
                                 <tr>
                                     <td>{{ $order->id }}</td>
                                     <td>
-                                        @if($order->items->isNotEmpty())
+                                        @if($order->items->isNotEmpty() && optional($order->items[0]->product)->image)
                                         <img src="{{ asset('assets/images/products/' . $order->items[0]->product->image) }}" alt="Foto Item" width="200">
                                         @else
                                         <span>Tidak ada item</span>
                                         @endif
                                     </td>
                                     <td>
-                                        @if($order->payment_proof)
-                                            @foreach($order->payment_proof as $proof)
+                                        @php $proofs = is_array($order->payment_proof) ? $order->payment_proof : (json_decode((string) $order->payment_proof, true) ?? []); @endphp
+                                        @if($proofs)
+                                            @foreach($proofs as $proof)
+                                                @if($proof)
                                                 <img src="{{ asset('assets/images/orders/' . $proof) }}" alt="Bukti Pembayaran" width="100" style="margin-right: 5px;">
+                                                @endif
                                             @endforeach
                                         @else
                                             <span>Tidak ada bukti</span>

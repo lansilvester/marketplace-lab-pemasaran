@@ -173,11 +173,11 @@
                                     @foreach ($reviews->where('product_id', $product->id) as $review)
 
                                     <div id="comments">
-                                        <h2 class="woocommerce-Reviews-title">Review untuk <span>{{ $review->product->name }}</span></h2>
+                                        <h2 class="woocommerce-Reviews-title">Review untuk <span>{{ optional($review->product)->name }}</span></h2>
                                         <ol class="commentlist">
                                             <li class="comment byuser comment-author-admin bypostauthor even thread-even depth-1" id="li-comment-20">
                                                 <div id="comment-20" class="comment_container">
-                                                    <img alt="" src="{{ asset('assets/images/profile') }}/{{ $review->user->profile->image }}" height="80" width="80">
+                                                    <img alt="" src="{{ asset('assets/images/profile') }}/{{ optional(optional($review->user)->profile)->image }}" height="80" width="80">
                                                     <div class="comment-text">
 
                                                         <span><b>{{ $review->rating }}</b></span><i class="bi bi-star-fill" style="color:#ffd607"></i> of 5
@@ -291,7 +291,7 @@
                     <div class="wrap-products">
                         <div class="products slide-carousel owl-carousel style-nav-1 equal-container" data-items="5" data-loop="false" data-nav="true" data-dots="false" data-responsive='{"0":{"items":"1"},"480":{"items":"2"},"768":{"items":"3"},"992":{"items":"3"},"1200":{"items":"5"}}' >
                         @foreach ($related_products as $r_product)
-                            @if ($r_product->image !== 'default-product.jpg' && $r_product->count() > 0)
+                            @if ($r_product->image !== 'default-product.jpg' && $related_products->count() > 0)
                             <div class="product product-style-2 equal-elem ">
                                 <div class="product-thumnail">
                                     <a href="{{ route('product.details', ['slug' => $r_product->slug ]) }}" title="{{ $r_product->name }}">

@@ -26,7 +26,6 @@
                                         <th>Image</th>
                                         <th>Title</th>
                                         <th>Subtitle</th>
-                                        <th>Price</th>
                                         <th>Link</th>
                                         <th>Status</th>
                                         <th>Date</th>
@@ -40,7 +39,6 @@
                                         <td><img src="{{ asset('assets/images/sliders') }}/{{ $slider->image }}" width="300px" alt=""></td>
                                         <td>{{ $slider->title }}</td>
                                         <td>{{ $slider->subtitle }}</td>
-                                        <td>{{ $slider->price }}</td>
                                         <td>{{ $slider->link }}</td>
                                         <td>
                                             @if($slider->status == 1)

@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Livewire\WithFileUploads;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class AdminEditProductComponent extends Component
 {
@@ -30,6 +31,10 @@ class AdminEditProductComponent extends Component
 
     public function mount($product_slug){
         $product = Product::where('slug', $product_slug)->first();
+        abort_unless($product, 404);
+        if(!in_array(Auth::user()->utype, ['ADM','OPT']) && $product->user_id !== Auth::id()){
+            abort(403);
+        }
         $this->name = $product->name;
         $this->slug = $product->slug;
         $this->short_description = $product->short_description;
@@ -41,8 +46,6 @@ class AdminEditProductComponent extends Component
         $this->image = $product->image;
         $this->images = explode(",",$product->images);
         $this->category_id = $product->category_id;
-        $this->newimage = $product->newimage;
-        // $this->newimages = $product->newimages;
         $this->product_id = $product->id;
 
     }
@@ -86,6 +89,10 @@ class AdminEditProductComponent extends Component
             ]);
         }
         $product = Product::find($this->product_id);
+        abort_unless($product, 404);
+        if(!in_array(Auth::user()->utype, ['ADM','OPT']) && $product->user_id !== Auth::id()){
+            abort(403);
+        }
 
         $product->name = $this->name;
         $product->slug = $this->slug;
@@ -97,8 +104,13 @@ class AdminEditProductComponent extends Component
         $product->quantity = $this->quantity;
 
         if($this->newimage){
-            unlink('assets/images/products'.'/'.$product->image);
-            $imageName = Carbon::now()->timestamp. '.' .$this->newimage->extension();
+            if($product->image && $product->image !== 'default-product.jpg'){
+                $path = public_path('assets/images/products/'.$product->image);
+                if(file_exists($path)){
+                    unlink($path);
+                }
+            }
+            $imageName = Carbon::now()->timestamp.uniqid().'.'.$this->newimage->extension();
             $this->newimage->storeAs('products', $imageName);
             $product->image = $imageName;
         }
@@ -107,28 +119,28 @@ class AdminEditProductComponent extends Component
             if($product->images){
                 $images = explode(",",$product->images);
                 foreach($images as $image){
-                    if($image){
-                        unlink('assets/images/products'.'/'.$image);
-
+                    if($image && $image !== 'default-product.jpg'){
+                        $path = public_path('assets/images/products/'.$image);
+                        if(file_exists($path)){
+                            unlink($path);
+                        }
                     }
                 }
             }
             $imagesname = '';
             foreach($this->newimages as $key=>$image){
-                $imgName = Carbon::now()->timestamp.$key.'.'.$image->extension();
+                $imgName = Carbon::now()->timestamp.$key.uniqid().'.'.$image->extension();
                 $image->storeAs('products', $imgName);
-                $imagesname = $imagesname.','.$imgName;
-
+                $imagesname = $imagesname === '' ? $imgName : $imagesname.','.$imgName;
             }
             $product->images = $imagesname;
-            
         }
 
         $product->category_id = $this->category_id;
         $product->save();
-        
+
         session()->flash('message', 'Product has been updated');
-        redirect()->route('admin.editproduct', ['product_slug' => $product->slug]) ;
+        return redirect()->route('admin.editproduct', ['product_slug' => $product->slug]);
     }
     public function render()
     {

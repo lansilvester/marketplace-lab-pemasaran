@@ -26,14 +26,14 @@ class SearchComponent extends Component
     }
 
     public function store($product_id, $product_name,$product_price){
-        Cart::add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
+        Cart::instance('cart')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
         session()->flash('success_message', 'Item Added in Cart');
         return redirect()->route('product.cart');
     }
 
     public function addToWishlist($product_id, $product_name,$product_price){
         Cart::instance('wishlist')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
-        $this->emitTo('wishlist-count-component', 'refreshComponent');
+        $this->dispatch('refreshComponent')->to('wishlist-count-component');
 
     }
 
@@ -41,7 +41,7 @@ class SearchComponent extends Component
         foreach(Cart::instance('wishlist')->content() as $witem){
             if($witem->id == $product_id){
                 Cart::instance('wishlist')->remove($witem->rowId);
-                $this->emitTo('wishlist-count-component', 'refreshComponent');
+                $this->dispatch('refreshComponent')->to('wishlist-count-component');
                 return;
             }
         }
@@ -61,8 +61,9 @@ class SearchComponent extends Component
     public function render()
     {
         $user = Auth::user();
-        $userLatitude = $user->profile->latitude;
-        $userLongitude = $user->profile->longitude;
+        $userProfile = optional($user->profile);
+        $userLatitude = $userProfile->latitude;
+        $userLongitude = $userProfile->longitude;
 
         if($this->sorting == 'date'){
             $products = Product::where('name','like','%'.$this->search.'%')
@@ -77,7 +78,7 @@ class SearchComponent extends Component
         }else if($this->sorting=='price-desc'){
             $products = Product::where('name','like','%'.$this->search.'%')
             ->where('category_id', 'like','%'.$this->product_cat_id.'%')
-            ->orderBy('price_desc','DESC')
+            ->orderBy('sale_price','DESC')
             ->get();
         }else{
             $products = Product::where('name','like','%'.$this->search.'%')
@@ -89,12 +90,15 @@ class SearchComponent extends Component
 
         // Menghitung jarak dari pengguna ke setiap produk
         foreach ($products as $product) {
-            $productLatitude = $product->user->profile->latitude; // Ganti dengan atribut latitude penjual
-            $productLongitude = $product->user->profile->longitude; // Ganti dengan atribut longitude penjual
+            $sellerProfile = optional($product->user)->profile;
+            $productLatitude = $sellerProfile->latitude;
+            $productLongitude = $sellerProfile->longitude;
 
-            $distance = $this->calculateDistance($userLatitude, $userLongitude, $productLatitude, $productLongitude);
-
-            $product->distance = $distance;
+            if ($userLatitude === null || $userLongitude === null || $productLatitude === null || $productLongitude === null) {
+                $product->distance = PHP_INT_MAX;
+            } else {
+                $product->distance = $this->calculateDistance((float)$userLatitude, (float)$userLongitude, (float)$productLatitude, (float)$productLongitude);
+            }
         }
 
         $products = $products->sortBy('distance');

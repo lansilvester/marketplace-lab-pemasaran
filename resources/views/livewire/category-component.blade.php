@@ -85,14 +85,14 @@
 									</div>
 									<div class="product-info">
 										<a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="product-name"><span>{{ $product->name }}</span></a>
-										<div class="wrap-price"><span class="product-price">{{ $product->regular_price }}</span></div>
+										<div class="wrap-price"><span class="product-price">@currency($product->sale_price)</span></div>
 										<a href="{{ route('product.details', ['slug'=> $product->slug]) }}" title="{{ $product->name }}" class="btn add-to-cart">Lihat Product</a>
 									</div>
 									<div class="product-wish">
 										@if($witems->contains($product->id))
 											<a href="#" wire:click.prevent="removeFromWishlist({{ $product->id }})"><i class="fa fa-heart fill-heart"></i></a>
 										@else
-											<a href="#" wire:click.prevent="addToWishlist({{ $product->id}},'{{ $product->name }}',{{ $product->regular_price }})"><i class="fa fa-heart"></i></a>
+											<a href="#" wire:click.prevent="addToWishlist({{ $product->id}},'{{ $product->name }}',{{ $product->sale_price }})"><i class="fa fa-heart"></i></a>
 										@endif
 									</div>
 								</div>

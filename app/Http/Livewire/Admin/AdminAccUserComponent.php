@@ -13,7 +13,9 @@ class AdminAccUserComponent extends Component
     public $utype;
     public $status;
     public function mount($user_id){
+        abort_unless(in_array(auth()->user()->utype, ['ADM','OPT']), 403);
         $user = User::where('id',$user_id)->first();
+        abort_unless($user, 404);
         $this->name = $user->name;
         $this->email = $user->email;
         $this->utype = $user->utype;
@@ -36,15 +38,17 @@ class AdminAccUserComponent extends Component
             'utype' => 'required',
             'status' => 'required'
         ]);
+        abort_unless(in_array(auth()->user()->utype, ['ADM','OPT']), 403);
         $user = User::find($this->user_id);
+        abort_unless($user, 404);
         $user->name = $this->name;
         $user->email = $this->email;
-        $user->utype = $this->utype;
-        $user->status = $this->status;
-        if($user->status == '1'){
-            session()->flash('active','User sudah aktif!');
+        if (auth()->user()->utype === 'ADM') {
+            $user->utype = $this->utype;
         }
+        $user->status = $this->status;
         $user->save();
+        session()->flash('message', 'User telah diupdate');
         return redirect('admin/users');
     }
     public function render()

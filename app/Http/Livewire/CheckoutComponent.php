@@ -9,7 +9,6 @@ use App\Models\OrderItem;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Livewire\WithFileUploads;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\Request;
 
 class CheckoutComponent extends Component
 {
@@ -34,48 +33,66 @@ class CheckoutComponent extends Component
         }
     }
 
-    public function checkout(Request $request)
+    public function checkout()
     {
         // Cek jika ada item dari wishlist
-        if ($request->has('wishlist')) {
-            // Tambahkan item dari wishlist ke cart
-            $item = Cart::instance('wishlist')->get($request->wishlist);
-            Cart::instance('cart')->add($item->id, $item->name, 1, $item->price)->associate('App\Models\Product');
-            Cart::instance('wishlist')->remove($request->wishlist);
+        if (request()->has('wishlist')) {
+            $wishlistItem = Cart::instance('wishlist')->get(request()->wishlist);
+            if ($wishlistItem) {
+                $price = (float) str_replace(',', '', $wishlistItem->price);
+                Cart::instance('cart')->add($wishlistItem->id, $wishlistItem->name, 1, $price)->associate('App\Models\Product');
+                Cart::instance('wishlist')->remove(request()->wishlist);
+            }
+        }
+
+        $cartItems = Cart::instance('cart')->content();
+
+        if ($cartItems->isEmpty()) {
+            session()->flash('error_message', 'Keranjang belanja masih kosong.');
+            return redirect()->route('product.cart');
         }
 
         $this->validate();
-
-        $order = new Order();
-        $order->user_id = Auth::id();
-        $order->total = (float) str_replace(',', '', Cart::instance('cart')->total());
-        $order->status = 'pending';
-
-        // Mendapatkan seller_id dari produk pertama di keranjang
-        $firstItem = Cart::instance('cart')->content()->first();
-        $order->seller_id = $firstItem->model->user_id; // Pastikan model produk memiliki relasi yang benar ke penjual
-
 
         // Simpan semua gambar yang diupload
         $imageNames = [];
         foreach ($this->images as $image) {
             $imageName = Carbon::now()->timestamp . '_' . uniqid() . '.' . $image->extension();
             $image->storeAs('orders', $imageName);
-            $imageNames[] = $imageName; // Menyimpan nama gambar ke array
+            $imageNames[] = $imageName;
+        }
+        $paymentProof = json_encode($imageNames);
+
+        // Kelompokkan item per penjual, lalu buat satu order per penjual
+        $itemsBySeller = [];
+        foreach ($cartItems as $item) {
+            $sellerId = optional($item->model)->user_id;
+            if (!$sellerId) {
+                session()->flash('error_message', 'Salah satu produk tidak tersedia lagi. Periksa kembali keranjang Anda.');
+                return redirect()->route('product.cart');
+            }
+            $itemsBySeller[$sellerId][] = $item;
         }
 
-        // Gabungkan nama gambar ke dalam satu string atau simpan sesuai kebutuhan
-        $order->payment_proof = json_encode($imageNames); // Simpan sebagai JSON jika ingin menyimpan banyak gambar
+        foreach ($itemsBySeller as $sellerId => $sellerItems) {
+            $order = new Order();
+            $order->user_id = Auth::id();
+            $order->seller_id = $sellerId;
+            $order->total = round(collect($sellerItems)->sum(function ($item) {
+                return (float) $item->total;
+            }), 2);
+            $order->status = 'pending';
+            $order->payment_proof = $paymentProof;
+            $order->save();
 
-        $order->save();
-
-        foreach (Cart::instance('cart')->content() as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $item->id;
-            $orderItem->quantity = $item->qty;
-            $orderItem->total = $item->total;
-            $orderItem->save();
+            foreach ($sellerItems as $item) {
+                $orderItem = new OrderItem();
+                $orderItem->order_id = $order->id;
+                $orderItem->product_id = $item->id;
+                $orderItem->quantity = $item->qty;
+                $orderItem->total = round((float) $item->total, 2);
+                $orderItem->save();
+            }
         }
 
         Cart::instance('cart')->destroy();

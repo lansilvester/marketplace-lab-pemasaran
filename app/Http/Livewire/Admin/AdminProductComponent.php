@@ -13,14 +13,27 @@ class AdminProductComponent extends Component
     use WithPagination;
     public function deleteProduct($id){
         $product = Product::find($id);
-        if($product->image){
-            unlink('assets/images/products'.'/'.$product->image);
+        if(!$product){
+            return;
+        }
+        if(!in_array(Auth::user()->utype, ['ADM','OPT']) && $product->user_id !== Auth::id()){
+            session()->flash('error_message', 'Anda tidak berhak menghapus produk ini.');
+            return;
+        }
+        if($product->image && $product->image !== 'default-product.jpg'){
+            $path = public_path('assets/images/products/'.$product->image);
+            if(file_exists($path)){
+                unlink($path);
+            }
         }
         if($product->images){
             $images = explode(",",$product->images);
             foreach($images as $image){
-                if($image){
-                    unlink('assets/images/products'.'/'.$image);
+                if($image && $image !== 'default-product.jpg'){
+                    $path = public_path('assets/images/products/'.$image);
+                    if(file_exists($path)){
+                        unlink($path);
+                    }
                 }
             }
         }

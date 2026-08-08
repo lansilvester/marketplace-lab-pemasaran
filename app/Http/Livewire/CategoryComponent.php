@@ -23,20 +23,20 @@ class CategoryComponent extends Component
     }
 
     public function store($product_id, $product_name,$product_price){
-        Cart::add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
+        Cart::instance('cart')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
         session()->flash('success_message', 'Item Added in Cart');
         return redirect()->route('product.cart');
     }
     public function addToWishlist($product_id, $product_name,$product_price){
         Cart::instance('wishlist')->add($product_id,$product_name,1,$product_price)->associate('App\Models\Product');
-        $this->emitTo('wishlist-count-component', 'refreshComponent');
+        $this->dispatch('refreshComponent')->to('wishlist-count-component');
     }
     
     public function removeFromWishlist($product_id){
         foreach(Cart::instance('wishlist')->content() as $witem){
             if($witem->id == $product_id){
                 Cart::instance('wishlist')->remove($witem->rowId);
-                $this->emitTo('wishlist-count-component', 'refreshComponent');
+                $this->dispatch('refreshComponent')->to('wishlist-count-component');
                 return;
             }
         }
@@ -45,6 +45,7 @@ class CategoryComponent extends Component
     public function render()
     {
         $category = Category::where('slug', $this->category_slug)->first();
+        abort_unless($category, 404);
         $category_id = $category->id;
         $category_name = $category->name;
 
@@ -52,10 +53,10 @@ class CategoryComponent extends Component
             $products = Product::where('category_id', $category_id)->orderBy('created_at','DESC')->paginate($this->pagesize);
         }
         else if($this->sorting == 'price'){
-            $products = Product::where('category_id', $category_id)->orderBy('regular_price','ASC')->paginate($this->pagesize);
+            $products = Product::where('category_id', $category_id)->orderBy('sale_price','ASC')->paginate($this->pagesize);
         }
         else if($this->sorting == 'price-desc'){
-            $products = Product::where('category_id', $category_id)->orderBy('price_desc','DESC')->paginate($this->pagesize);
+            $products = Product::where('category_id', $category_id)->orderBy('sale_price','DESC')->paginate($this->pagesize);
         }
         else{
             $products = Product::where('category_id', $category_id)->paginate($this->pagesize);

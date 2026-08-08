@@ -35,7 +35,7 @@
 
 				<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 main-content-area">
                     @if(Auth::check())
-                        @if (Auth::user()->profile->latitude == ''  && Auth::user()->profile->status !== '1' && Auth::user()->profile->longitude == '' && Auth::user()->utype !== 'ADM')
+                        @if (Auth::user()->utype !== 'ADM' && optional(Auth::user()->profile)->latitude == '' && optional(Auth::user()->profile)->longitude == '')
                         <div class="row">
                             <div class="col-md-3"></div>
                             <div class="col-md-6">
@@ -88,7 +88,7 @@
                                     $witems = Cart::instance('wishlist')->content()->pluck('id');
                                 @endphp
                                 @foreach($products as $product)
-                                    @if($product->image !== 'default-product.jpg' && $product->count() > 0)
+                                    @if($product->image !== 'default-product.jpg' && $products->count() > 0)
                                         <li class="col-lg-4 col-md-6 col-sm-6 col-xs-6 ">
                                             <div class="product product-style-3 equal-elem ">
                                                 <div class="product-thumnail">
@@ -100,13 +100,14 @@
                                                 <div class="product-info">
                                                     <a href="{{ route('product.details',['slug'=>$product->slug]) }}" class="product-name"><span style="font-weight: bold; font-size:1.8em; line-height:1.5em">{{ $product->name }}</span></a>
                                                     <div class="wrap-price"><span class="product-price">@currency($product->sale_price)</span></div>
+                                                    @if(optional($product->user)->id)
                                                     <a href="{{ route('product.penjual', ['penjual'=>$product->user->id]) }}">
                                                         <div style="
                                                             background:#efefef;
                                                             padding:5px;
                                                             border-radius:10px;
                                                         ">
-                                                        @if($product->user->profile->image)
+                                                        @if(optional($product->user->profile)->image)
                                                             <img src="{{ asset('assets/images/profile') }}/{{ $product->user->profile->image }}" width="50px" alt="">
                                                             @else
 
@@ -115,10 +116,11 @@
                                                             <b>{{ $product->user->name }}</b>
                                                         </div>
                                                     </a>
+                                                    @endif
 
-                                                    {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id}},'{{ $product->name }}',{{ $product->regular_price }})">Add To Cart</a> --}}
+                                                    {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id}},'{{ $product->name }}',{{ $product->sale_price }})">Add To Cart</a> --}}
 
-                                                    @if (Auth::check() && Auth::user()->utype == 'USR' || Auth::user()->utype == 'PNJ' && Auth::user()->status === 1)
+                                                    @if (Auth::check() && (Auth::user()->utype == 'USR' || (Auth::user()->utype == 'PNJ' && Auth::user()->status)))
                                                     <div class="product-wish">
                                                         @if($witems->contains($product->id))
                                                             <a href="#" wire:click.prevent="removeFromWishlist({{ $product->id }})"><i class="fa fa-heart fill-heart"></i></a>
@@ -132,10 +134,10 @@
                                             </div>
                                         </li>
                                     @endif
-                                    @if($product->image == 'default-product.jpg' && $product->count() == 1)
-                                        <li><p class="text-center" style="padding:20px">Product Kosong</p></li>
-                                    @endif
                                 @endforeach
+                                @if($products->count() == 0)
+                                    <li><p class="text-center" style="padding:20px">Product Kosong</p></li>
+                                @endif
                             </ul>
 
                         </div>

@@ -12,34 +12,42 @@ class TransaksiComponent extends Component
 
     public function mount()
     {
-        // Ambil ID penjual (seller)
         $sellerId = Auth::id();
 
-        logger('Seller ID: ' . $sellerId);
-
-        // Ambil transaksi yang hanya melibatkan produk yang dijual oleh penjual ini dan berstatus pending
-        $this->transactions =Order::where('seller_id', $sellerId)
-            ->with('items.product') // Menyertakan relasi items dan produk
-            ->orderBy('created_at','desc') // Menyertakan relasi items dan produk
-            ->get();
-
-        logger('Jumlah transaksi: ' . $this->transactions->count());
+        if (in_array(Auth::user()->utype, ['ADM', 'OPT'])) {
+            $this->transactions = Order::with('items.product')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $this->transactions = Order::where('seller_id', $sellerId)
+                ->with('items.product')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
     }
+
     public function updateStatus($orderId, $status)
     {
         $order = Order::find($orderId);
-        if ($order) {
-            $order->status = $status;
-            $order->save();
+        if (!$order) {
+            return;
+        }
 
-            // Update status dalam koleksi transaksi yang ada, agar tidak perlu merefresh seluruh daftar
-            foreach ($this->transactions as &$transaction) {
-                if ($transaction->id == $orderId) {
-                    $transaction->status = $status;
-                    break;
-                }
+        if ($order->seller_id !== Auth::id() && !in_array(Auth::user()->utype, ['ADM', 'OPT'])) {
+            session()->flash('error_message', 'Anda tidak berhak mengubah status transaksi ini.');
+            return;
+        }
+
+        $order->status = $status;
+        $order->save();
+
+        foreach ($this->transactions as &$transaction) {
+            if ($transaction->id == $orderId) {
+                $transaction->status = $status;
+                break;
             }
         }
+        unset($transaction);
     }
 
     public function render()

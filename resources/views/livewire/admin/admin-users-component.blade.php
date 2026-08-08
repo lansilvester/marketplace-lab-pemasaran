@@ -67,10 +67,7 @@
                                 </td>
                                 <td>
                                     <a href="{{ route('admin.accuser', ['user_id'=>$user_unapprove->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
-
-                                    {{-- <form action="{{ route('admin.usersapprove', ['user_id'=>$user_unapprove->id]) }}" method="post">
-                                        <button type="submit" class="btn btn-success"><i class="bi bi-clipboard2-check"></i> Terima</button>
-                                    </form> --}}
+                                    <a href="#" onclick="confirm('Terima akun {{ $user_unapprove->name }}?') || event.stopImmediatePropagation()" class="btn btn-success" wire:click.prevent="activateUser({{ $user_unapprove->id }})"><i class="bi bi-clipboard2-check"></i> Terima</a>
                                 </td>
                             </tr>
                             @empty
@@ -122,6 +119,7 @@
                                 <th>Email</th>
                                 <th>Created At</th>
                                 <th>Role</th>
+                                <th>Status</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -129,18 +127,17 @@
                             @php
                                 $no = 1;
                             @endphp
-                            @foreach($users as $u)
-                            @if($u->count() > 0)
+                            @forelse($users as $u)
                                 <tr>
                                     <td>{{ $no++}}</td>
                                     <td>
-                                        @if($u->profile->image)
+                                        @if(optional($u->profile)->image)
                                         <img src="{{ asset('assets/images/profile') }}/{{ $u->profile->image }}" alt="" width=100></td>
                                         @else
                                         <img src="https://www.perpustakaan-bi.org/img/user/blank.png" width="100" alt="">
                                         @endif
                                         <td>{{ $u->name }}</td>
-                                    <td>{{ $u->profile->mobile }}</td>
+                                    <td>{{ optional($u->profile)->mobile ?? '-' }}</td>
                                     <td>{{ $u->email }}</td>
                                     <td>{{ $u->created_at->format('l, d-M-Y') }} <small><i>({{ $u->created_at->diffForHumans() }})</i></small></td>
                                     <td>
@@ -162,32 +159,37 @@
                                         @endif
                                     </td>
                                     <td>
+                                        @if($u->status)
+                                        <span class="badge bg-success">Aktif</span>
+                                        @else
+                                        <span class="badge bg-danger">Non-aktif</span>
+                                        @endif
+                                    </td>
+                                    <td>
                                         @if(Auth::user()->utype == 'ADM')
                                         <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
                                         <a href="{{ route('admin.edituser', ['user_id'=>$u->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
+                                        @if($u->id !== Auth::user()->id && $u->utype !== 'ADM')
+                                        @if($u->status)
+                                        <a href="#" onclick="confirm('Nonaktifkan akun {{ $u->name }}?') || event.stopImmediatePropagation()" class="btn btn-secondary" wire:click.prevent="deactivateUser({{ $u->id }})"><i class="bi bi-x-circle"></i></a>
+                                        @else
+                                        <a href="#" onclick="confirm('Aktifkan akun {{ $u->name }}?') || event.stopImmediatePropagation()" class="btn btn-success" wire:click.prevent="activateUser({{ $u->id }})"><i class="bi bi-check-circle"></i></a>
+                                        @endif
                                         <a href="#" onclick="confirm('Are you sure want to delete this user?') || event.stopImmediatePropagation()" class="btn btn-danger" wire:click.prevent="deleteUser({{ $u->id }})"><i class="fa fa-trash"></i></a>
-                                        {{-- <a href="" class="btn btn-primary"><i class="bi bi-eye"></i></a> --}}
                                         @endif
-                                        @if (Auth::user()->utype !== 'ADM')
-                                            @if ($u->utype == 'ADM')
-                                            <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
-
-                                            @endif
-                                            @if($u->utype !== 'ADM')
-                                            <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
-                                            <a href="{{ route('admin.edituser', ['user_id'=>$u->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
-                                            <a href="#" onclick="confirm('Are you sure want to delete this user?') || event.stopImmediatePropagation()" class="btn btn-danger" wire:click.prevent="deleteUser({{ $u->id }})"><i class="fa fa-trash"></i></a>
-                                            @endif
+                                        @else
+                                        <a href="{{ route('admin.showuser', ['user_id'=>$u->id]) }}" class="btn btn-info"><i class="bi bi-eye"></i></a>
+                                        @if($u->utype !== 'ADM')
+                                        <a href="{{ route('admin.edituser', ['user_id'=>$u->id]) }}" class="btn btn-warning"><i class="bi bi-pencil"></i></a>
                                         @endif
-
+                                        @endif
                                     </td>
                                 </tr>
-                            @else
+                            @empty
                             <tr>
-                                <td colspan="7" class="text-center text-warning">Data Kosong</td>
+                                <td colspan="8" class="text-center text-warning">Data Kosong</td>
                             </tr>
-                            @endif
-                            @endforeach
+                            @endforelse
                         </tbody>
                     </table>
                     {{ $users->links() }}

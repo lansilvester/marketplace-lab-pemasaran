@@ -58,15 +58,15 @@
                                     $no = 1;
                                 @endphp
                                 @foreach($products as $product)
-                                    @if($product->image !== 'default-product.jpg' && $product->count() !== 0)
+                                    @if($product->image !== 'default-product.jpg')
                                     <tr>
                                         <td>{{ $no++ }}</td>
                                         <td><img src="{{ asset('assets/images/products') }}/{{ $product->image }}" alt="" width=100></td>
                                         <td>{{ $product->name }}</td>
                                         <td>{{ $product->stock_status }}</td>
                                         <td>@currency($product->sale_price)</td>
-                                        <td>{{ $product->category->name }}</td>
-                                        <td>{{ $product->user->name }}</td>
+                                        <td>{{ optional($product->category)->name }}</td>
+                                        <td>{{ optional($product->user)->name }}</td>
                                         <td>{{ $product->created_at->format('l, d-M-Y')  }} <br> <span class="badge ">{{ $product->created_at->diffForHumans() }}</span></td>
                                         <td>
                                             {{-- <a href="" class="btn btn-info"><i class="fa fa-eye"></i></a> --}}
@@ -75,12 +75,12 @@
                                         </td>
                                     </tr>
                                     @endif
-                                    @if($product->image == 'default-product.jpg' && $product->count() == 1)
-                                        <tr>
-                                            <td colspan="9" class="text-center">Data Kosong</td>
-                                        </tr>
-                                    @endif
                                 @endforeach
+                                @if($products->count() == 0)
+                                    <tr>
+                                        <td colspan="9" class="text-center">Data Kosong</td>
+                                    </tr>
+                                @endif
                             </tbody>
                         </table>
                         {{ $products->links() }}
@@ -113,15 +113,15 @@
                                     $no = 1;
                                 @endphp
                                 @foreach($my_products as $my_product)
-                                @if($my_product->image !== 'default-product.jpg' || $my_product->count() > 1)
+                                @if($my_product->image !== 'default-product.jpg')
                                 <tr>
                                     <td>{{ $no++ }}</td>
                                     <td><img src="{{ asset('assets/images/products') }}/{{ $my_product->image }}" alt="" width=100></td>
                                     <td>{{ $my_product->name }}</td>
                                     <td>{{ $my_product->stock_status }}</td>
                                     <td>@currency($my_product->sale_price)</td>
-                                    <td>{{ $my_product->category->name }}</td>
-                                    <td>{{ $my_product->user->name }}</td>
+                                    <td>{{ optional($my_product->category)->name }}</td>
+                                    <td>{{ optional($my_product->user)->name }}</td>
                                     <td>{{ $my_product->created_at->format('l, d-M-Y') }} <br> <span class="badge">{{ $my_product->created_at->diffForHumans() }}</span> </td>
                                     <td>
                                         <a href="{{ route('admin.editproduct', ['product_slug'=>$my_product->slug]) }}" class="btn btn-warning"><i class="fa fa-edit"></i></a>
@@ -129,12 +129,12 @@
                                     </td>
                                 </tr>
                                 @endif
-                                @if($my_product->image == 'default-product.jpg' && $my_product->count() == 0)
+                                @endforeach
+                                @if($my_products->count() == 0)
                                             <tr>
                                                 <td colspan="9" class="text-center">Data Kosong</td>
                                             </tr>
                                 @endif
-                                @endforeach
                             </tbody>
                             <tfoot>
                                 <tr>

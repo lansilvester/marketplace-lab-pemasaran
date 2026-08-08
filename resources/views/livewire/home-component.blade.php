@@ -75,7 +75,7 @@
 
                                                 <div class="wrap-price">
                                                     <span class="product-price">
-                                                        {{ $lp->regular_price }}
+                                                        @currency($lp->sale_price)
                                                     </span>
                                                 </div>
                                             </div>
@@ -109,7 +109,7 @@
                                         @php
                                             $c_products = DB::table('products')->where('category_id', $category->id)->get()->take($no_of_products);
                                         @endphp
-                                        @foreach ($c_products as $c_product)
+                                        @forelse ($c_products as $c_product)
                                         @if($c_product->image !== 'default-product.jpg' && $c_product->id !== 1)
                                         <div class="product product-style-2 equal-elem">
                                             <div class="product-thumnail">
@@ -129,10 +129,9 @@
                                             </div>
                                         </div>
                                         @endif
-                                        @if($c_product->image == 'default-product.jpg' && DB::table('products')->count() == 1)
+                                        @empty
                                             <p class="text-center" style="padding:20px 0">Belum ada product</p>
-                                        @endif
-                                        @endforeach
+                                        @endforelse
                                     </div>
                                 </div>
                                 @endforeach

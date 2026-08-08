@@ -20,6 +20,7 @@ class AdminEditHomeSliderComponent extends Component
 
     public function mount($slide_id){
         $slider = HomeSlider::find($slide_id);
+        abort_unless($slider, 404);
         $this->title = $slider->title;
         $this->subtitle = $slider->subtitle;
         $this->link = $slider->link;
@@ -29,20 +30,33 @@ class AdminEditHomeSliderComponent extends Component
     }
 
     public function updateSlide(){
+        $this->validate([
+            'title' => 'required',
+            'status' => 'required',
+            'newimage' => 'nullable|mimes:jpeg,jpg,png|max:2048',
+        ]);
+
         $slider = HomeSlider::find($this->slider_id);
+        abort_unless($slider, 404);
         $slider->title = $this->title;
         $slider->subtitle = $this->subtitle;
         $slider->link = $this->link;
 
         if($this->newimage){
-            $imagename = Carbon::now()->timestamp. '.' . $this->newimage->extension();
+            if($slider->image && $slider->image !== 'slider-1.jpg'){
+                $path = public_path('assets/images/sliders/'.$slider->image);
+                if(file_exists($path)){
+                    unlink($path);
+                }
+            }
+            $imagename = Carbon::now()->timestamp.uniqid().'.'.$this->newimage->extension();
             $this->newimage->storeAs('sliders', $imagename);
             $slider->image = $imagename;
         }
 
         $slider->status = $this->status;
         $slider->save();
-        Session()->flash('message', 'Slide has been updated');
+        session()->flash('message', 'Slide has been updated');
 
     }
 

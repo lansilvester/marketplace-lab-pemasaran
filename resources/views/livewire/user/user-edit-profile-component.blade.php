@@ -12,6 +12,11 @@
                             {{ Session::get('message') }} <br>
                         </div>
                     @endif
+                    @if (Session::has('error_message'))
+                        <div class="alert alert-danger" role="alert">
+                            {{ Session::get('error_message') }} <br>
+                        </div>
+                    @endif
                     <form wire:submit.prevent="updateProfile">
 
                     <div class="col-md-4">
@@ -23,6 +28,11 @@
                             <img src="https://www.kindpng.com/picc/m/24-248253_user-profile-default-image-png-clipart-png-download.png" class="" width="100%" style="margin-bottom: 1em;"/>
                         @endif
                         <input type="file" class="form-control" wire:model="newimage">
+                        @error('newimage')
+                            <div class="alert alert-danger mt-2" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </div>
+                        @enderror
                         @if ($image)
                             <button type="button" class="btn btn-danger mt-2" wire:click="deleteImage"><i class="fa fa-trash"></i> Hapus Foto</button>
                         @endif

@@ -37,7 +37,7 @@
 							<ul>
 							@if(Route::has('login'))
 								@auth
-									@if(Auth::user()->status === 1)
+									@if(Auth::user()->status)
 										@if(Auth::user()->utype==='ADM')
 											<li class="menu-item menu-item-has-children parent">
 											<a href="" onclick="event.preventDefault()">My Account {{Auth::user()->name}} <i class="fa fa-angle-down"></i></a>
@@ -223,7 +223,7 @@
 						@livewire('header-search-component')
 
 						<div class="wrap-icon right-section">
-							@if (Auth::check() && Auth::user()->status === 1)
+							@if (Auth::check() && Auth::user()->status)
 									@livewire('wishlist-count-component')
 									@livewire('cart-count-component')
 

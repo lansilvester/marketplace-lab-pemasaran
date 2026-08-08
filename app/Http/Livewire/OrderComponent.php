@@ -26,7 +26,7 @@ class OrderComponent extends Component
     public function showOrderDetails($orderId)
     {
         $this->selectedOrder = Order::with('items')->find($orderId);
-        $this->dispatchBrowserEvent('show-modal');
+        $this->dispatch('show-modal');
     }
     public function render()
     {

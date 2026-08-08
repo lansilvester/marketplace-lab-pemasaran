@@ -16,7 +16,7 @@ class UserReviewComponent extends Component
     public function mount($item_id){
         $this->item_id = $item_id;
     }
-    public function update($fields){
+    public function updated($fields){
         $this->validateOnly($fields, [
             'rating'=>'required',
             'comment'=>'required'
@@ -35,12 +35,6 @@ class UserReviewComponent extends Component
         $review->rating = $this->rating;
         $review->comment = $this->comment;
         $review->save();
-        
-        $productItem = Product::find($this->item_id);
-       if( $productItem->rstatus == false){
-        $productItem->rstatus = true;
-       }
-        $productItem->save();
         session()->flash('message','Review telah diberikan');
     }
     public function render()

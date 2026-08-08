@@ -1,7 +1,4 @@
 <main id="main" class="main-site left-sidebar" style="min-height: 80vh">
-    @php
-    $penjual =  $products[0]->user;
-    @endphp
     <div class="container">
 
         <div class="wrap-breadcrumb">
@@ -11,7 +8,7 @@
                 <li class="item-link"><a href="/" class="link">Penjual</a></li>
                 <li class="item-link">
                     <span>
-                        {{ $penjual->name }}
+                        {{ $seller->name }}
                     </span>
                 </li>
             </ul>
@@ -20,40 +17,42 @@
             <div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 main-content-area">
                 <div class="row bg-info" style="padding:20px 0">
                     <div class="col-md-2">
-                        <img src="{{ asset('assets/images/profile') }}/{{ $penjual->profile->image }}" alt="">
+                        <img src="{{ asset('assets/images/profile') }}/{{ optional($seller->profile)->image }}" alt="">
                     </div>
                     <div class="col-md-6">
-                        <h2>{{ $penjual->name }}</h2>
-                        <h5>Bergabung Sejak : <i>{{ $penjual->created_at->diffForHumans() }}</i></h5>
-                        @if ($penjual->name == 'admin')
-                        <h5>Total Product : <i>{{ $penjual->product->count()-1 }}</i></h5>
+                        <h2>{{ $seller->name }}</h2>
+                        <h5>Bergabung Sejak : <i>{{ $seller->created_at->diffForHumans() }}</i></h5>
+                        @if ($seller->name == 'admin')
+                        <h5>Total Product : <i>{{ max($seller->product->count()-1, 0) }}</i></h5>
                         @else
-                        <h5>Total Products : <i>{{ $penjual->product->count() }}</i></h5>
+                        <h5>Total Products : <i>{{ $seller->product->count() }}</i></h5>
                         @endif
 
-                        <a href="https://www.google.com/maps?q={!! $penjual->profile->latitude !!},{!! $penjual->profile->longitude !!}" class="btn btn-primary" target="__blank"><i class="fa fa-map"></i> Map</a>
+                        @if(optional($seller->profile)->latitude && optional($seller->profile)->longitude)
+                        <a href="https://www.google.com/maps?q={{ $seller->profile->latitude }},{{ $seller->profile->longitude }}" class="btn btn-primary" target="__blank"><i class="fa fa-map"></i> Map</a>
+                        @endif
 
                     </div>
                     <div class="col-md-4">
                         <h4>
-                            <i class="bi bi-telephone"></i> {{ $penjual->profile->mobile }}
+                            <i class="bi bi-telephone"></i> {{ optional($seller->profile)->mobile }}
                         </h4>
                         <address>
                             <h5>
-                                Kode Pos : <b>{{ $penjual->profile->zipcode }}</b>
+                                Kode Pos : <b>{{ optional($seller->profile)->zipcode }}</b>
                             </h4>
                             <h5>
 
-                                {{ $penjual->profile->city }}, {{ $penjual->profile->province }}
+                                {{ optional($seller->profile)->city }}, {{ optional($seller->profile)->province }}
                             </h4>
                         </address>
-                        <a href="{{ $penjual->profile->facebook }}" style="font-size:2em; color: #074aaf; margin-right:1em" target="__blank"><i class="bi bi-facebook"></i></a>
-                        <a href="{{ $penjual->profile->instagram }}" style="font-size:2em; color: #c6018e" target="__blank"><i class="bi bi-instagram"></i></a>
+                        <a href="{{ optional($seller->profile)->facebook }}" style="font-size:2em; color: #074aaf; margin-right:1em" target="__blank"><i class="bi bi-facebook"></i></a>
+                        <a href="{{ optional($seller->profile)->instagram }}" style="font-size:2em; color: #c6018e" target="__blank"><i class="bi bi-instagram"></i></a>
 
                     </div>
                 </div>
                 @php
-                $product_unggulan = DB::table('products')->where('featured', true)->where('user_id', $penjual->id)->get();
+                $product_unggulan = DB::table('products')->where('featured', true)->where('user_id', $seller->id)->get();
                 @endphp
                 @if ($product_unggulan->count() > 0)
 
@@ -111,7 +110,7 @@
                             $witems = Cart::instance('wishlist')->content()->pluck('id');
                         @endphp
                         @foreach($products as $product)
-                        @if ($product->image !== 'default-product.jpg' && $product->count() > 0)
+                        @if ($product->image !== 'default-product.jpg' && $products->count() > 0)
                             <li class="col-lg-4 col-md-6 col-sm-6 col-xs-6 ">
                                 <div class="product product-style-3 equal-elem ">
                                     <div class="product-thumnail">
@@ -126,7 +125,7 @@
                                         {{-- <a href="#" class="btn add-to-cart" wire:click.prevent="store({{ $product->id}},'{{ $product->name }}',{{ $product->sale_price }})">Add To Cart</a> --}}
 
                                         @if (Auth::check() && Auth::user()->utype == 'USR')
-                                            @if(Auth::user()->status === 1)
+                                            @if(Auth::user()->status)
                                             <div class="product-wish">
                                                 @if($witems->contains($product->id))
                                                     <a href="#" wire:click.prevent="removeFromWishlist({{ $product->id }})"><i class="fa fa-heart fill-heart"></i></a>
@@ -141,14 +140,12 @@
                                 </div>
                             </li>
                         @endif
-
-                        @if ($product->image == 'default-product.jpg' && $product->count() == 0)
+                        @endforeach
+                        @if($products->count() == 0)
                         <li>
                             <h5 class="text-danger">Tidak ada produk</h5>
                         </li>
                         @endif
-
-                        @endforeach
                     </ul>
 
                 </div>

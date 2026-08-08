@@ -7,25 +7,43 @@ use App\Models\Profile;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
-use Gloudemans\Shoppingcart\Facades\Cart;
-use Illuminate\Support\Facades\Redirect;
 
 class AdminUsersComponent extends Component
 {
     use WithPagination;
     public function deleteUser($id){
-        $profile = User::findOrFail($id);
-        if($profile->profile->image !== 'default.jpg'){
-            unlink('assets/images/profile/'. $this->image);
+        $user = User::findOrFail($id);
+        if ($id === Auth::id() || in_array($user->utype, ['ADM'])) {
+            session()->flash('error_message', 'Akun admin tidak dapat dihapus.');
+            return;
         }
-        $profile->delete();
+        if ($user->profile && $user->profile->image && $user->profile->image !== 'default.jpg') {
+            $path = public_path('assets/images/profile/'. $user->profile->image);
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
+        $user->delete();
         session()->flash('message', 'User has been deleted');
     }
+
+    public function activateUser($id){
+        $user = User::findOrFail($id);
+        $user->status = true;
+        $user->save();
+        session()->flash('message', 'Akun '.$user->name.' telah diaktifkan');
+    }
+
+    public function deactivateUser($id){
+        $user = User::findOrFail($id);
+        $user->status = false;
+        $user->save();
+        session()->flash('message', 'Akun '.$user->name.' telah dinonaktifkan');
+    }
+
     public function mount()
     {
-        if (Auth::user()->utype !== 'ADM') {
-            return Redirect::to('/');
-        }
+        abort_unless(in_array(Auth::user()->utype, ['ADM','OPT']), 403);
     }
     public function render()
     {

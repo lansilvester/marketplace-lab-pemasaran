@@ -29,7 +29,16 @@ class AdminEditUsersComponent extends Component
     public $newimage;
 
     public function mount($user_id){
+        abort_unless(in_array(Auth::user()->utype, ['ADM','OPT']), 403);
         $user = User::where('id',$user_id)->first();
+        abort_unless($user, 404);
+        if(!$user->profile){
+            $profile = new Profile();
+            $profile->user_id = $user->id;
+            $profile->image = "default.jpg";
+            $profile->save();
+            $user->load('profile');
+        }
         $this->name = $user->name;
         $this->email = $user->email;
         $this->utype = $user->utype;
@@ -51,14 +60,14 @@ class AdminEditUsersComponent extends Component
             'email' => 'required',
             'utype' => 'required',
             'status' => 'required',
-            'mobile'=>'max:255',
-            'instagram' =>'max:255',
-            'facebook'=>'max:255',
-            'city'=>'max:255',
-            'province'=>'max:255',
-            'country'=>'max:255',
-            'zipcode'=>'max:255',
-            'image'=>'file|image'
+            'mobile'=>'nullable|digits_between:9,15',
+            'instagram' =>'nullable|max:255',
+            'facebook'=>'nullable|max:255',
+            'city'=>'nullable|max:255',
+            'province'=>'nullable|max:255',
+            'country'=>'nullable|max:255',
+            'zipcode'=>'nullable|max:255',
+            'newimage'=>'nullable|mimes:jpeg,jpg,png|max:2048'
         ]);
     }
 
@@ -68,29 +77,40 @@ class AdminEditUsersComponent extends Component
             'email' => 'required',
             'utype' => 'required',
             'status' => 'required',
-            'mobile'=> 'numeric|max:255',
-            'instagram' =>'max:255',
-            'facebook'=>'max:255',
-            'city'=>'max:255',
-            'province'=>'max:255',
-            'country'=>'max:255',
-            'zipcode'=>'max:255',
+            'mobile'=> 'nullable|digits_between:9,15',
+            'instagram' =>'nullable|max:255',
+            'facebook'=>'nullable|max:255',
+            'city'=>'nullable|max:255',
+            'province'=>'nullable|max:255',
+            'country'=>'nullable|max:255',
+            'zipcode'=>'nullable|max:255',
         ]);
+        abort_unless(in_array(Auth::user()->utype, ['ADM','OPT']), 403);
+
+        if($this->newimage){
+            $this->validate([
+                'newimage' => 'nullable|mimes:jpeg,jpg,png|max:2048',
+            ]);
+        }
 
         $user = User::find($this->user_id);
+        abort_unless($user, 404);
 
         $user->name = $this->name;
         $user->email = $this->email;
-        $user->utype = $this->utype;
+        if (Auth::user()->utype === 'ADM') {
+            $user->utype = $this->utype;
+        }
         $user->status = $this->status;
         $user->save();
         if($this->newimage){
-            if($this->image){
-                if($this->image !== 'default.jpg'){
-                    unlink('assets/images/profile/'. $this->image);
+            if($this->image && $this->image !== 'default.jpg'){
+                $path = public_path('assets/images/profile/'.$this->image);
+                if(file_exists($path)){
+                    unlink($path);
                 }
             }
-            $imageName = $user->email.'_'.Carbon::now()->timestamp. '.'.$this->newimage->extension();
+            $imageName = $user->email.'_'.Carbon::now()->timestamp.uniqid().'.'.$this->newimage->extension();
             $this->newimage->storeAs('profile', $imageName);
             $user->profile->image = $imageName;
         }

@@ -71,15 +71,15 @@ class AdminAddProductComponent extends Component
         $product->stock_status = $this->stock_status;
         $product->featured = $this->featured;
         $product->quantity = $this->quantity;
-        $imageName = Carbon::now()->timestamp. '.' .$this->image->extension();
+        $imageName = Carbon::now()->timestamp. uniqid() . '.' .$this->image->extension();
         $this->image->storeAs('products', $imageName);
         $product->image = $imageName;
         if($this->images){
             $imagesname = '';
             foreach($this->images as $key=>$image){
-                $imgName = Carbon::now()->timestamp. $key . '.' .$image->extension();
+                $imgName = Carbon::now()->timestamp. uniqid() . $key . '.' .$image->extension();
                 $image->storeAs('products', $imgName);
-                $imagesname = $imagesname. ','.$imgName;
+                $imagesname = $imagesname === '' ? $imgName : $imagesname. ','.$imgName;
             }
             $product->images = $imagesname;
         }

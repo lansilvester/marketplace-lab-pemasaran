@@ -81,10 +81,10 @@
 									</fieldset>
 									
 									<fieldset class="wrap-input">
-										{{-- <label class="remember-field">
+										<label class="remember-field">
 											<input class="frm-input " name="remember" id="rememberme" value="forever" type="checkbox"><span>Remember me</span>
-										</label> --}}
-										{{-- <a class="link-function left-position" href="{{ route('password.request') }}" title="Forgotten password?">Lupa Password?</a> --}}
+										</label>
+										<a class="link-function left-position" href="{{ route('password.request') }}" title="Forgotten password?">Lupa Password?</a>
 									</fieldset>
 									<button type="submit" class="btn btn-submit" name="submit"><i class="bi bi-box-arrow-in-right"></i> &nbsp;Login</button>
 									<div class="row">
@@ -102,4 +102,18 @@
 		</div><!--end container-->
 
 	</main>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if($errors->any())
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Gagal',
+                text: 'Email atau password yang anda masukkan salah',
+                confirmButtonColor: '#d33'
+            });
+        });
+    </script>
+    @endif
 </x-guest-layout>

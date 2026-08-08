@@ -15,7 +15,7 @@
                         <img src="{{ asset('assets/images/profile') }}/{{ $user->profile->image }}" width="100%" />
                     </div>
                     <div class="col-md-8">
-                        @if(Auth::user()->status === 0)
+                        @if(!Auth::user()->status)
 						<div class="alert alert-info">
                             <i class="bi bi-info-circle-fill"></i> Akun Menunggu Approvement Admin
                         </div>

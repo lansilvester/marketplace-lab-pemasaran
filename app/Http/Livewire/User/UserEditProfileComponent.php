@@ -31,6 +31,13 @@ class UserEditProfileComponent extends Component
 
     public function mount(){
         $user = User::find(Auth::user()->id);
+        if(!$user->profile){
+            $profile = new \App\Models\Profile();
+            $profile->user_id = $user->id;
+            $profile->image = "default.jpg";
+            $profile->save();
+            $user->load('profile');
+        }
         $this->name = $user->name;
         $this->email = $user->email;
         $this->mobile = $user->profile->mobile;
@@ -44,22 +51,25 @@ class UserEditProfileComponent extends Component
         $this->zipcode = $user->profile->zipcode;
         $this->latitude = $user->profile->latitude;
         $this->longitude = $user->profile->longitude;
-        $this->latlong = $this->latitude . ', ' . $this->longitude;
+        $this->latlong = ($this->latitude && $this->longitude) ? $this->latitude.', '.$this->longitude : '';
         // $this->newimage = $user->profile->newimage;
 
     }
     public function updated($fields)
     {
         $this->validateOnly($fields, [
+            'newimage' => 'nullable|mimes:jpeg,jpg,png|max:2048',
             'latlong' => 'required',
-            // Add other validation rules here
-        ]);
+        ], $this->messages());
     }
     public function deleteImage()
     {
         $user = Auth::user();
-        if ($this->image) {
-            Storage::delete('public/profile_photos/' . $this->image);
+        if ($this->image && $this->image !== 'default.jpg') {
+            $path = public_path('assets/images/profile/'.$this->image);
+            if(file_exists($path)){
+                unlink($path);
+            }
             $this->image = null;
             $user->profile->image = null;
             $user->profile->save();
@@ -67,24 +77,43 @@ class UserEditProfileComponent extends Component
         }
     }
 
+    protected function messages()
+    {
+        return [
+            'newimage.mimes' => 'Foto profil harus berformat jpg, jpeg, atau png.',
+            'newimage.max' => 'Ukuran foto profil maksimal 2MB.',
+        ];
+    }
+
     public function updateProfile(){
         $this->validate([
+            'newimage' => 'nullable|mimes:jpeg,jpg,png|max:2048',
             'latlong' => 'required',
-            // Add other validation rules here
-        ]);
+        ], $this->messages());
 
         // Split latlong into latitude and longitude
         $latlongArray = explode(',', $this->latlong);
         if (count($latlongArray) == 2) {
-            $this->latitude = trim($latlongArray[0]);
-            $this->longitude = trim($latlongArray[1]);
+            $lat = trim($latlongArray[0]);
+            $lng = trim($latlongArray[1]);
+            if ($lat === '' && $lng === '') {
+                session()->flash('error_message', 'Latitude dan Longitude wajib diisi.');
+                return;
+            }
+            if (($lat !== '' && !is_numeric($lat)) || ($lng !== '' && !is_numeric($lng))) {
+                session()->flash('error_message', 'Format Latitude dan Longitude tidak valid.');
+                return;
+            }
+            $this->latitude = $lat !== '' ? $lat : null;
+            $this->longitude = $lng !== '' ? $lng : null;
             $user = User::find(Auth::user()->id);
             $user->name = $this->name;
             $user->save();
             if($this->newimage){
-                if($this->image){
-                    if($this->image !== 'default.jpg'){
-                        unlink('assets/images/profile/'. $this->image);
+                if($this->image && $this->image !== 'default.jpg'){
+                    $path = public_path('assets/images/profile/'. $this->image);
+                    if(file_exists($path)){
+                        unlink($path);
                     }
                 }
                 $imageName = $user->email.'_'.Carbon::now()->timestamp. '.'.$this->newimage->extension();

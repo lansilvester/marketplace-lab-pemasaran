@@ -22,7 +22,7 @@
                 <h3 class="box-title">Products Name</h3>
                 <ul class="products-cart">
                     @foreach (Cart::instance('cart')->content() as $item)
-                    <span class="badge" style="margin:10px 0px; background-color:#008ec6; font-size:1.3em; padding:.3em .6em;"><i class="bi bi-shop"></i> {{ $item->model->user->name }}</span>
+                    <span class="badge" style="margin:10px 0px; background-color:#008ec6; font-size:1.3em; padding:.3em .6em;"><i class="bi bi-shop"></i> {{ optional($item->model->user)->name }}</span>
                     <li class="pr-cart-item">
                         <div class="product-image">
                             <figure><img src="{{ asset('assets/images/products') }}/{{ $item->model->image }}" alt="{{ $item->model->name }}"></figure>
@@ -30,7 +30,7 @@
                         <div class="product-name">
                             <a class="link-to-product" href="{{ route('product.details', ['slug' => $item->model->slug])}}">{{ $item->model->name }}</a>
                         </div>
-                        <div class="price-field produtc-price"><p class="price">{{ $item->model->regular_price }}</p></div>
+                        <div class="price-field produtc-price"><p class="price">@currency($item->model->sale_price)</p></div>
                         <div class="quantity">
                             <div class="quantity-input">
                                 <input type="text" name="product-quatity" value="{{ $item->qty }}" data-max="{{ $item->model->quantity }}" pattern="[0-9]*" disabled>
